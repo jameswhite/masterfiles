@@ -8,7 +8,10 @@ bundle common g
    (!SuSE).(!redhat)::
      "crontab" string => "/var/spool/cron/crontabs/root";
     all::
-      "acl"    slist => { "0.0.0.0/0" };
+      "acl"    slist => { 
+                          "0.0.0.0/0",
+                          "75.146.11.137/32",
+                        };
 }
 
 bundle agent cfengine

@@ -53,9 +53,9 @@ body runagent control
 
 body server control 
 {
-  allowconnects         => { @(g.acl) };
-  allowallconnects      => { @(g.acl) };
-  trustkeysfrom         => { @(g.acl) };
+  allowconnects         => { "0.0.0.0/0" };
+  allowallconnects      => { "0.0.0.0/0" };
+  trustkeysfrom         => { "0.0.0.0/0" };
 
   # Make updates and runs happen in one
   cfruncommand          => "$(sys.workdir)/bin/cf-agent -f failsafe.cf && $(sys.workdir)/bin/cf-agent";
@@ -66,8 +66,8 @@ body server control
 bundle server access_rules {
   access:
     any::
-      "${g.masterfiles}"
-        admit => { @(g.acl) };
+      "/var/lib/cfengine3/masterfiles"
+        admit => { "0.0.0.0/0" };
       "$(sys.workdir)/bin/cf-agent"
         admit => { "${g.phost}" };
   roles:
