@@ -1,0 +1,6 @@
+bundle common g
+{
+  vars:
+    acl    slist => {
+                      "0.0.0.0/0",
+                    };

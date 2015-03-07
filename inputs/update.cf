@@ -1,0 +1,108 @@
+bundle agent update
+{
+  vars:
+   "masterfiles"          string => "/var/lib/cfengine3/masterfiles";
+   "modules"              string => "/var/lib/cfengine3/modules";
+   "inputs"               string => "/var/lib/cfengine3/inputs";
+   # "distribution_server"  string => "104.237.144.97";
+   "distribution_server"  string => "localhost";
+
+  files:
+    any::
+      "/var/cfengine/inputs/cf_promises_validated"
+        comment => "Check whether a validation stamp is available for a new policy update",
+        copy_from => u_rcp_mtime("$(masterfiles)/cf_promises_validated"),
+        classes => u_if_repaired("validated_updates_ready");
+
+    distribution_host|validated_updates_ready::
+      "/var/cfengine/inputs"
+        comment => "Copy policy updates from master source on distribution server",
+        perms => u_p("644"),
+        copy_from => u_rcp("$(masterfiles)/inputs"),
+        move_obstructions => "true",
+        depth_search => u_recurse("inf"),
+        action => u_immediate;
+
+  processes:
+      "cf-execd"        restart_class => "start_exec",
+                        comment => "cf-execd needs to run on all hosts.";
+
+      "cf-monitord"     restart_class => "start_monitor",
+                        comment => "cf-monitord needs to run on all hosts.";
+
+      "cf-serverd"      restart_class => "start_server",
+                        comment => "cf-serverd runs everywhere for cf-runagent support.";
+  commands:
+    start_exec::
+      "$(sys.workdir)/bin/cf-execd";
+
+    start_server::
+      "$(sys.workdir)/bin/cf-serverd";
+
+    start_monitor::
+      "$(sys.workdir)/bin/cf-monitord";
+
+#    odin::
+#      "/usr/local/sbin/git2masterfiles",
+#         contain => u_umask_022_noout;
+}
+
+################################################################################
+# local update bodies
+################################################################################
+body perms u_p(p)
+{
+  mode  => "$(p)";
+}
+
+body file_select cf3_files
+{
+  leaf_name => { "cf-.*" };
+  file_result => "leaf_name";
+}
+
+body copy_from mycopy(from,server)
+{
+  source      => "$(from)";
+  compare     => "digest";
+}
+
+body copy_from u_rcp(from) 
+{
+  source      => "$(from)";
+  compare     => "digest";
+  trustkey    => "true";
+  copy_backup => "false";
+  purge       => "true";
+  servers => { "$(distribution_server)" };
+}
+
+body copy_from u_rcp_mtime(from) 
+{
+  source      => "$(from)";
+  compare     => "mtime";
+  trustkey    => "true";
+  copy_backup => "false";
+  servers => { "$(distribution_server)" };
+}
+
+body action u_immediate
+{
+  ifelapsed => "1";
+}
+
+body depth_search u_recurse(d)
+{
+  depth => "$(d)";
+}
+
+body classes u_if_repaired(x) 
+{
+  promise_repaired => { "$(x)" };
+}
+
+body contain u_umask_022_noout 
+{
+  umask => "022";
+  no_output => "true";
+}
