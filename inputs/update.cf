@@ -4,8 +4,7 @@ bundle agent update
    "masterfiles"          string => "/var/lib/cfengine3/masterfiles";
    "modules"              string => "/var/lib/cfengine3/modules";
    "inputs"               string => "/var/lib/cfengine3/inputs";
-   # "distribution_server"  string => "104.237.144.97";
-   "distribution_server"  string => "localhost";
+   "distribution_server"  string => "104.237.144.97";
 
   files:
     any::
