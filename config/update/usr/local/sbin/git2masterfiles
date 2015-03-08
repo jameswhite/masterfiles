@@ -1,0 +1,51 @@
+#!/bin/bash
+PATH="/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/var/cfengine/bin"
+GIT_CACHE="/var/cache/git"
+MASTERFILES="/var/lib/cfengine3/masterfiles"
+
+export MASTERFILES GIT_CACHE PATH
+
+SELF="$(basename $0)"
+DIR="$(dirname $0)"
+FQDIR="$(cd ${DIR}; pwd)"
+FQPATH="${FQDIR}/${SELF}"
+OLDMD5="$(md5sum ${FQPATH} | awk '{print $1}')"
+
+if [ ! -d ${MASTERFILES} ]; then mkdir -p ${MASTERFILES}; fi
+if [ ! -d ${GIT_CACHE} ]; then mkdir -p ${GIT_CACHE};fi
+
+cd ${GIT_CACHE}
+
+GITREPOS="cfengine.git"
+case "$(hostname -s)" in 
+    pear)
+        GITBRANCH="lab"
+    ;;
+    *)
+        GITBRANCH="master"
+    ;;
+esac
+
+for repo in `echo "${GITREPOS}"`; do
+    repodir=$(/bin/basename  ${repo}|sed -e 's/\.git$//g')
+    if [ ! -d ${GIT_CACHE}/${repodir}/.git ]; then
+        if [ -d ${GIT_CACHE}/${repodir} ]; then rm -fr ${GIT_CACHE}/${repodir}; fi
+        /usr/bin/git clone git@git.eftdomain.net:${repo} > /dev/null 2>&1
+        (cd ${GIT_CACHE}/${repodir}; git checkout ${GITBRANCH} > /dev/null 2>&1)
+    else
+        (cd ${GIT_CACHE}/${repodir}; git pull; git branch | grep '*' | grep "${GITBRANCH}" || git checkout ${GITBRANCH}> /dev/null 2>&1)
+    fi
+    NEWMD5=$(md5sum ${GIT_CACHE}/${repodir}/config/update/${FQPATH} | awk '{print $1}')
+    if [ "${OLDMD5}" != "${NEWMD5}" ]; then 
+        install -m 0744 ${GIT_CACHE}/${repodir}/config/update/${FQPATH} ${FQPATH}
+        exec ${FQPATH}
+    fi
+
+    if [ -d ${GIT_CACHE}/${repodir}/ ];then
+        /usr/bin/rsync -aqzPC --exclude ".git" --exclude "cf_promises_validated" --delete ${GIT_CACHE}/${repodir}/inputs/ ${MASTERFILES}/inputs/
+        /usr/bin/rsync -aqzPC --exclude ".git" --delete ${GIT_CACHE}/${repodir}/config/ ${MASTERFILES}/config/
+        /usr/bin/rsync -aqzPC --exclude ".git" --delete ${GIT_CACHE}/${repodir}/modules/ ${MASTERFILES}/modules/
+        (cd ${GIT_CACHE}/${repodir}; /usr/bin/git log| /usr/bin/head -1| /usr/bin/awk '{print $NF}') > ${MASTERFILES}/.git_commit_hash
+    fi
+done
+
