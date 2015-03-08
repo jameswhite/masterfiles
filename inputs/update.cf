@@ -17,7 +17,7 @@ bundle agent update
       "$(inputs)"
         comment => "Copy policy updates from master source on distribution server",
         perms => u_p("644"),
-        copy_from => u_rcp("$(masterfiles)"),
+        copy_from => u_rcp("$(masterfiles)/inputs"),
         move_obstructions => "true",
         depth_search => u_recurse("inf"),
         action => u_immediate;
