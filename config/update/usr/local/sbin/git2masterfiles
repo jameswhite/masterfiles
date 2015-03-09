@@ -63,8 +63,10 @@ for repo in `echo "${GIT_REPOS}"`; do
                 rm -fr ${MASTERFILES}/${ldir}
             fi
         done
-        for lbranch in $(git branch | grep -v -- '->' | grep -v "master" | awk '{print $NF}' ); do
-            git branch -D ${lbranch}
+        for lbranch in $(git branch | awk '{print $NF}'); do
+            if [ -z "$(git branch -r | grep -v -- '->' | awk -F'/' '{print $NF}'|grep ${ldir})" ]; then
+                git branch -D ${lbranch}
+            fi
         done
       )
     fi
