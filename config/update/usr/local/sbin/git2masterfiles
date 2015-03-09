@@ -55,18 +55,17 @@ for repo in `echo "${GIT_REPOS}"`; do
         [ "$(cd ${GIT_CACHE}/${repo_dir}; git branch | grep '*' | awk '{print $NF}')" != "master" ] && git checkout master
       )
 
-#      # delete all local branches and masterfile directories that are no longer in the remote repository
-#      (
-#        cd ${GIT_CACHE}/${repo_dir}
-#        for ldir in $(ls ${MASTERFILES}); do
-#            if [ -z "$(git branch -r | grep -v -- '->' | awk -F'/' '{print $NF}'|grep ${ldir})" ]; then
-#                rm -fr ${MASTERFILES}/${ldir}
-#            fi
-#        done
-#        for lbranch in $(git branch | grep -v -- '->' | grep -v "master" | awk '{print $NF}' ); do
-#            git branch -D ${lbranch}
-#        done
-#      )
-
+      # delete all local branches and masterfile directories that are no longer in the remote repository
+      (
+        cd ${GIT_CACHE}/${repo_dir}
+        for ldir in $(ls ${MASTERFILES}); do
+            if [ -z "$(git branch -r | grep -v -- '->' | awk -F'/' '{print $NF}'|grep ${ldir})" ]; then
+                rm -fr ${MASTERFILES}/${ldir}
+            fi
+        done
+        for lbranch in $(git branch | grep -v -- '->' | grep -v "master" | awk '{print $NF}' ); do
+            git branch -D ${lbranch}
+        done
+      )
     fi
 done
