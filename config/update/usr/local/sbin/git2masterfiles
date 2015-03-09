@@ -43,12 +43,14 @@ for repo in `echo "${GIT_REPOS}"`; do
         for rbranch in $(git branch -r | grep -v -- '->' | awk -F'/' '{print $NF}'); do
             if [ -z "$(git branch| grep ${rbranch})" ]; then
                 git checkout -b ${rbranch} origin/${rbranch}
-                for dir in $(echo "config inputs modules"); do
-                    [ ! -d "${MASTERFILES}/${rbranch}/${dir}" ] && mkdir -p "${MASTERFILES}/${rbranch}/${dir}/"
-                    rsync -aqzPC --exclude ".git" --exclude "cf_promises_validated" --delete ${GIT_CACHE}/${repo_dir}/${dir}/ ${MASTERFILES}/${rbranch}/${dir}/
-                done
-                (cd ${GIT_CACHE}/${repo_dir}; git log| head -1| awk '{print $NF}') > ${MASTERFILES}/.git_commit_hash
+            else
+                git checkout ${rbranch}
             fi
+            for dir in $(echo "config inputs modules"); do
+                [ ! -d "${MASTERFILES}/${rbranch}/${dir}" ] && mkdir -p "${MASTERFILES}/${rbranch}/${dir}/"
+                rsync -aqzPC --exclude ".git" --exclude "cf_promises_validated" --delete ${GIT_CACHE}/${repo_dir}/${dir}/ ${MASTERFILES}/${rbranch}/${dir}/
+                (cd ${GIT_CACHE}/${repo_dir}; git log| head -1| awk '{print $NF}') > ${MASTERFILES}/${rbranch}/.git_commit_hash
+            done
         done
         [ "$(cd ${GIT_CACHE}/${repo_dir}; git branch | grep '*' | awk '{print $NF}')" != "master" ] && git checkout master
       )
