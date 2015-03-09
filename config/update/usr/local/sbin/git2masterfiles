@@ -52,7 +52,7 @@ for repo in `echo "${GIT_REPOS}"`; do
                 (cd ${GIT_CACHE}/${repo_dir}; git log| head -1| awk '{print $NF}') > ${MASTERFILES}/${rbranch}/.git_commit_hash
             done
         done
-        [ "$(cd ${GIT_CACHE}/${repo_dir}; git branch | grep '*' | awk '{print $NF}')" != "master" ] && git checkout master
+        [ "$(cd ${GIT_CACHE}/${repo_dir}; git branch | grep '*' | awk '{print $NF}')" != "master" ] && git checkout master >/dev/null 2>&1
       )
 
       # delete all local branches and masterfile directories that are no longer in the remote repository
