@@ -25,7 +25,7 @@ for repo in `echo "${GIT_REPOS}"`; do
         git clone ${GIT_SOURCE} ${repo} > /dev/null 2>&1
         [ -d ${GIT_CACHE}/${repo_dir} ] && exit 1
     else
-        (cd ${GIT_CACHE}/${repo_dir}; git pull; git branch | grep '*' | grep "${GIT_BRANCH}" || git checkout ${GIT_BRANCH}> /dev/null 2>&1)
+        ( cd ${GIT_CACHE}/${repo_dir}; git pull )
     fi
 
     # make sure we have the correct copy of this script
