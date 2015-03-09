@@ -48,7 +48,7 @@ for repo in `echo "${GIT_REPOS}"`; do
             fi
             for dir in $(echo "config inputs modules"); do
                 [ ! -d "${MASTERFILES}/${rbranch}/${dir}" ] && mkdir -p "${MASTERFILES}/${rbranch}/${dir}/"
-                rsync -aqzPC --exclude ".git" --exclude "cf_promises_validated" --delete ${GIT_CACHE}/${repo_dir}/${dir}/ ${MASTERFILES}/${rbranch}/${dir}/
+                [ -d "${GIT_CACHE}/${repo_dir}/${dir}/" ] && rsync -aqzPC --exclude ".git" --exclude "cf_promises_validated" --delete ${GIT_CACHE}/${repo_dir}/${dir}/ ${MASTERFILES}/${rbranch}/${dir}/
                 (cd ${GIT_CACHE}/${repo_dir}; git log| head -1| awk '{print $NF}') > ${MASTERFILES}/${rbranch}/.git_commit_hash
             done
         done
