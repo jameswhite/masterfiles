@@ -44,8 +44,8 @@ for repo in `echo "${GIT_REPOS}"`; do
             if [ -z "$(git branch| grep ${rbranch})" ]; then
                 git checkout -b ${rbranch} origin/${rbranch}
                 for dir in $(echo "config inputs modules"); do
-                    [ ! -d "${GIT_CACHE}/${repo_dir}/${rbranch}/${dir}" ] && mkdir -p "${GIT_CACHE}/${repo_dir}/${rbranch}/${dir}"
-                    # rsync -aqzPC --exclude ".git" --exclude "cf_promises_validated" --delete ${GIT_CACHE}/${repo_dir}/${dir}/ ${MASTERFILES}/${rbranch}/${dir}/
+                    [ ! -d "${MASTERFILES}/${rbranch}/${dir}" ] && mkdir -p "${MASTERFILES}/${rbranch}/${dir}/"
+                    rsync -aqzPC --exclude ".git" --exclude "cf_promises_validated" --delete ${GIT_CACHE}/${repo_dir}/${dir}/ ${MASTERFILES}/${rbranch}/${dir}/
                 done
                 (cd ${GIT_CACHE}/${repo_dir}; git log| head -1| awk '{print $NF}') > ${MASTERFILES}/.git_commit_hash
             fi
