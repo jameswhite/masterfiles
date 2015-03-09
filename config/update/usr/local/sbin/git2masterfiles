@@ -46,9 +46,9 @@ for repo in `echo "${GIT_REPOS}"`; do
     fi
 
     if [ -d ${GIT_CACHE}/${repo_dir}/ ];then
-        [ -d "${MASTERFILES}/inputs" ] && rsync -aqzPC --exclude ".git" --exclude "cf_promises_validated" --delete ${GIT_CACHE}/${repo_dir}/inputs/ ${MASTERFILES}/inputs/
-        [ -d "${MASTERFILES}/config" ] && rsync -aqzPC --exclude ".git" --delete ${GIT_CACHE}/${repo_dir}/config/ ${MASTERFILES}/config/
-        [ -d "${MASTERFILES}/modules" ] && rsync -aqzPC --exclude ".git" --delete ${GIT_CACHE}/${repo_dir}/modules/ ${MASTERFILES}/modules/
+        [ -d "${GIT_CACHE}/${repo_dir}/inputs" ] && rsync -aqzPC --exclude ".git" --exclude "cf_promises_validated" --delete ${GIT_CACHE}/${repo_dir}/inputs/ ${MASTERFILES}/inputs/
+        [ -d "${GIT_CACHE}/${repo_dir}/config" ] && rsync -aqzPC --exclude ".git" --delete ${GIT_CACHE}/${repo_dir}/config/ ${MASTERFILES}/config/
+        [ -d "${GIT_CACHE}/${repo_dir}/modules" ] && rsync -aqzPC --exclude ".git" --delete ${GIT_CACHE}/${repo_dir}/modules/ ${MASTERFILES}/modules/
         (cd ${GIT_CACHE}/${repo_dir}; git log| head -1| awk '{print $NF}') > ${MASTERFILES}/.git_commit_hash
     fi
 done
