@@ -2,6 +2,8 @@
 PATH="/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/var/cfengine/bin"
 GIT_CACHE="/var/cache/git"
 MASTERFILES="/var/lib/cfengine3/masterfiles"
+GIT_SOURCE="https://github.com/jameswhite/masterfiles.git"
+GIT_REPOS="masterfiles"
 
 export MASTERFILES GIT_CACHE PATH
 
@@ -9,40 +11,45 @@ SELF="$(basename $0)"
 DIR="$(dirname $0)"
 FQDIR="$(cd ${DIR}; pwd)"
 FQPATH="${FQDIR}/${SELF}"
-OLDMD5="$(md5sum ${FQPATH} | awk '{print $1}')"
+echo "FQPATH = ${FQPATH}"
+OLD_MD5="$(md5sum ${FQPATH} | awk '{print $1}')"
 
 if [ ! -d ${MASTERFILES} ]; then mkdir -p ${MASTERFILES}; fi
 if [ ! -d ${GIT_CACHE} ]; then mkdir -p ${GIT_CACHE};fi
 
 cd ${GIT_CACHE}
 
-GIT_REPOS="cfengine"
-case "$(hostname -s)" in 
+case "$(hostname -s)" in
     *)
         GIT_BRANCH="master"
     ;;
 esac
 
 for repo in `echo "${GIT_REPOS}"`; do
-    repo_dir=$(/bin/basename  ${repo}|sed -e 's/\.git$//g')
+    echo  "-=[$repo]=-"
+    repo_dir=$(basename  ${repo}|sed -e 's/\.git$//g')
+    echo  "-=[$repo_dir]=-"
     if [ ! -d ${GIT_CACHE}/${repo_dir}/.git ]; then
         if [ -d ${GIT_CACHE}/${repo_dir} ]; then rm -fr ${GIT_CACHE}/${repo_dir}; fi
-        /usr/bin/git clone git@git.eftdomain.net:${repo} > /dev/null 2>&1
+        git clone ${GIT_SOURCE} ${repo} > /dev/null 2>&1
+        [ -d ${GIT_CACHE}/${repo_dir} ] && exit 1
         (cd ${GIT_CACHE}/${repo_dir}; git checkout ${GIT_BRANCH} > /dev/null 2>&1)
     else
         (cd ${GIT_CACHE}/${repo_dir}; git pull; git branch | grep '*' | grep "${GIT_BRANCH}" || git checkout ${GIT_BRANCH}> /dev/null 2>&1)
     fi
     NEW_MD5=$(md5sum ${GIT_CACHE}/${repo_dir}/config/update/${FQPATH} | awk '{print $1}')
-    if [ "${OLDMD5}" != "${NEW_MD5}" ]; then 
+    echo "OLD_MD5 = ${OLD_MD5}"
+    echo "NEW_MD5 = ${NEW_MD5}"
+    if [ "${OLD_MD5}" != "${NEW_MD5}" ]; then 
         install -m 0744 ${GIT_CACHE}/${repo_dir}/config/update/${FQPATH} ${FQPATH}
-        exec ${FQPATH}
+    #    exec ${FQPATH}
     fi
 
-    if [ -d ${GIT_CACHE}/${repo_dir}/ ];then
-        /usr/bin/rsync -aqzPC --exclude ".git" --exclude "cf_promises_validated" --delete ${GIT_CACHE}/${repo_dir}/inputs/ ${MASTERFILES}/inputs/
-        /usr/bin/rsync -aqzPC --exclude ".git" --delete ${GIT_CACHE}/${repo_dir}/config/ ${MASTERFILES}/config/
-        /usr/bin/rsync -aqzPC --exclude ".git" --delete ${GIT_CACHE}/${repo_dir}/modules/ ${MASTERFILES}/modules/
-        (cd ${GIT_CACHE}/${repo_dir}; /usr/bin/git log| /usr/bin/head -1| /usr/bin/awk '{print $NF}') > ${MASTERFILES}/.git_commit_hash
-    fi
+#    if [ -d ${GIT_CACHE}/${repo_dir}/ ];then
+#        rsync -aqzPC --exclude ".git" --exclude "cf_promises_validated" --delete ${GIT_CACHE}/${repo_dir}/inputs/ ${MASTERFILES}/inputs/
+#        rsync -aqzPC --exclude ".git" --delete ${GIT_CACHE}/${repo_dir}/config/ ${MASTERFILES}/config/
+#        rsync -aqzPC --exclude ".git" --delete ${GIT_CACHE}/${repo_dir}/modules/ ${MASTERFILES}/modules/
+#        (cd ${GIT_CACHE}/${repo_dir}; git log| head -1| awk '{print $NF}') > ${MASTERFILES}/.git_commit_hash
+#    fi
 done
 
