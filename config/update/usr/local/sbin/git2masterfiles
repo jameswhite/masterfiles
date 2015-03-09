@@ -11,7 +11,6 @@ SELF="$(basename $0)"
 DIR="$(dirname $0)"
 FQDIR="$(cd ${DIR}; pwd)"
 FQPATH="${FQDIR}/${SELF}"
-echo "FQPATH = ${FQPATH}"
 OLD_MD5="$(md5sum ${FQPATH} | awk '{print $1}')"
 
 if [ ! -d ${MASTERFILES} ]; then mkdir -p ${MASTERFILES}; fi
@@ -26,9 +25,7 @@ case "$(hostname -s)" in
 esac
 
 for repo in `echo "${GIT_REPOS}"`; do
-    echo  "-=[$repo]=-"
     repo_dir=$(basename  ${repo}|sed -e 's/\.git$//g')
-    echo  "-=[$repo_dir]=-"
     if [ ! -d ${GIT_CACHE}/${repo_dir}/.git ]; then
         if [ -d ${GIT_CACHE}/${repo_dir} ]; then rm -fr ${GIT_CACHE}/${repo_dir}; fi
         git clone ${GIT_SOURCE} ${repo} > /dev/null 2>&1
@@ -38,8 +35,6 @@ for repo in `echo "${GIT_REPOS}"`; do
         (cd ${GIT_CACHE}/${repo_dir}; git pull; git branch | grep '*' | grep "${GIT_BRANCH}" || git checkout ${GIT_BRANCH}> /dev/null 2>&1)
     fi
     NEW_MD5=$(md5sum ${GIT_CACHE}/${repo_dir}/config/update/${FQPATH} | awk '{print $1}')
-    echo "OLD_MD5 = ${OLD_MD5}"
-    echo "NEW_MD5 = ${NEW_MD5}"
     if [ "${OLD_MD5}" != "${NEW_MD5}" ]; then 
         install -m 0744 ${GIT_CACHE}/${repo_dir}/config/update/${FQPATH} ${FQPATH}
         exec ${FQPATH}
