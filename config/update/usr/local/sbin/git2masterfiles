@@ -18,33 +18,54 @@ if [ ! -d ${GIT_CACHE} ]; then mkdir -p ${GIT_CACHE};fi
 
 cd ${GIT_CACHE}
 
-case "$(hostname -s)" in
-    *)
-        GIT_BRANCH="master"
-    ;;
-esac
-
 for repo in `echo "${GIT_REPOS}"`; do
+
+    # clone||update the repository
     repo_dir=$(basename  ${repo}|sed -e 's/\.git$//g')
     if [ ! -d ${GIT_CACHE}/${repo_dir}/.git ]; then
         if [ -d ${GIT_CACHE}/${repo_dir} ]; then rm -fr ${GIT_CACHE}/${repo_dir}; fi
         git clone ${GIT_SOURCE} ${repo} > /dev/null 2>&1
         [ -d ${GIT_CACHE}/${repo_dir} ] && exit 1
-        (cd ${GIT_CACHE}/${repo_dir}; git checkout ${GIT_BRANCH} > /dev/null 2>&1)
     else
         (cd ${GIT_CACHE}/${repo_dir}; git pull; git branch | grep '*' | grep "${GIT_BRANCH}" || git checkout ${GIT_BRANCH}> /dev/null 2>&1)
     fi
+
+    # make sure we have the correct copy of this script
     NEW_MD5=$(md5sum ${GIT_CACHE}/${repo_dir}/config/update/${FQPATH} | awk '{print $1}')
-    if [ "${OLD_MD5}" != "${NEW_MD5}" ]; then 
+    if [ "${OLD_MD5}" != "${NEW_MD5}" ]; then
         install -m 0744 ${GIT_CACHE}/${repo_dir}/config/update/${FQPATH} ${FQPATH}
         exec ${FQPATH}
     fi
 
+    # checkout all the remote branches locally, rsync them to masterfiles/<branch_name>
     if [ -d ${GIT_CACHE}/${repo_dir}/ ];then
-        [ -d "${GIT_CACHE}/${repo_dir}/inputs" ] && rsync -aqzPC --exclude ".git" --exclude "cf_promises_validated" --delete ${GIT_CACHE}/${repo_dir}/inputs/ ${MASTERFILES}/inputs/
-        [ -d "${GIT_CACHE}/${repo_dir}/config" ] && rsync -aqzPC --exclude ".git" --delete ${GIT_CACHE}/${repo_dir}/config/ ${MASTERFILES}/config/
-        [ -d "${GIT_CACHE}/${repo_dir}/modules" ] && rsync -aqzPC --exclude ".git" --delete ${GIT_CACHE}/${repo_dir}/modules/ ${MASTERFILES}/modules/
-        (cd ${GIT_CACHE}/${repo_dir}; git log| head -1| awk '{print $NF}') > ${MASTERFILES}/.git_commit_hash
+      (cd ${GIT_CACHE}/${repo_dir}; git fetch > /dev/null 2>&1)
+      (
+        cd ${GIT_CACHE}/${repo_dir}
+        for rbranch in $(git branch -r | grep -v -- '->' | awk -F'/' '{print $NF}'); do
+            if [ -z "$(git branch| grep ${rbranch})" ]; then
+                git checkout -b ${rbranch} origin/${rbranch}
+                for dir in $(echo "config inputs modules"); do
+                    [ -d "${GIT_CACHE}/${repo_dir}/${dir}" ] && rsync -aqzPC --exclude ".git" --exclude "cf_promises_validated" --delete ${GIT_CACHE}/${repo_dir}/${dir}/ ${MASTERFILES}/${rbranch}/${dir}/
+                done
+                (cd ${GIT_CACHE}/${repo_dir}; git log| head -1| awk '{print $NF}') > ${MASTERFILES}/.git_commit_hash
+            fi
+        done
+        git checkout master
+      )
+
+      # delete all local branches and masterfile directories that are no longer in the remote repository
+      (
+        cd ${GIT_CACHE}/${repo_dir}
+        for ldir in $(ls ${MASTERFILES}); do
+            if [ -z "$(git branch -r | grep -v -- '->' | awk -F'/' '{print $NF}'|grep ${ldir})" ]; then
+                rm -fr ${MASTERFILES}/${ldir}
+            fi
+        done
+        for lbranch in $(git branch | grep -v -- '->' | grep -v "master" | awk '{print $NF}' ); do
+            git branch -D ${lbranch}
+        done
+      )
+
     fi
 done
-
