@@ -10,14 +10,14 @@ bundle agent update
     any::
       "$(inputs)/cf_promises_validated"
         comment => "Check whether a validation stamp is available for a new policy update",
-        copy_from => u_rcp_mtime("$(masterfiles)/cf_promises_validated"),
+        copy_from => u_rcp_mtime("$(masterfiles)/master/cf_promises_validated"),
         classes => u_if_repaired("validated_updates_ready");
 
     distribution_host|validated_updates_ready::
       "$(inputs)"
         comment => "Copy policy updates from master source on distribution server",
         perms => u_p("644"),
-        copy_from => u_rcp("$(masterfiles)/inputs"),
+        copy_from => u_rcp("$(masterfiles)/master/inputs"),
         move_obstructions => "true",
         depth_search => u_recurse("inf"),
         action => u_immediate;
@@ -41,9 +41,9 @@ bundle agent update
 #    start_monitor::
 #      "$(sys.workdir)/bin/cf-monitord";
 #
-#    odin::
-#      "/usr/local/sbin/git2masterfiles",
-#         contain => u_umask_022_noout;
+    odin::
+      "/usr/local/sbin/git2masterfiles",
+         contain => u_umask_022_noout;
 }
 
 ################################################################################
