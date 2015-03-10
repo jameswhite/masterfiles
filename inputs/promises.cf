@@ -1,10 +1,10 @@
 body common control
 {
-  bundlesequence  => { 
+  bundlesequence  => {
                        "update",
                        "garbage_collection",
                        "main",
-                       "cfengine"  
+                       "cfengine"
                      };
   inputs          => {
                        "update.cf",
@@ -45,13 +45,13 @@ body reporter control
 
 body runagent control
 {
-  hosts => { 
-            "127.0.0.1" 
+  hosts => {
+            "127.0.0.1"
             # , "myhost.example.com:5308", ...
            };
 }
 
-body server control 
+body server control
 {
   allowconnects         => { "0.0.0.0/0" };
   allowallconnects      => { "0.0.0.0/0" };
