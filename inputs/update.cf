@@ -42,8 +42,7 @@ bundle agent update
 #      "$(sys.workdir)/bin/cf-monitord";
 #
     odin::
-      "/usr/local/sbin/git2masterfiles",
-         contain => u_umask_022_noout;
+      "/usr/local/sbin/git2masterfiles";
 }
 
 ################################################################################

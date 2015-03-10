@@ -4,6 +4,7 @@ export GIT_CACHE="/var/cache/git"
 export MASTERFILES="/var/lib/cfengine3/masterfiles"
 export GIT_SOURCE="https://github.com/jameswhite/masterfiles.git"
 export GIT_REPOS="masterfiles"
+umask 0022
 
 SELF="$(basename $0)"
 DIR="$(dirname $0)"
