@@ -72,3 +72,5 @@ for repo in `echo "${GIT_REPOS}"`; do
       )
     fi
 done
+# copy the masterfiles failsafe.cf to masterfiles root
+cp ${MASTERFILES}/master/inputs/{failsafe.cf,update.cf} ${MASTERFILES}
