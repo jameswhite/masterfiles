@@ -1,3 +1,4 @@
+# Change this with caution, it will put your policies in an un-fixable state
 bundle agent update
 {
   vars:

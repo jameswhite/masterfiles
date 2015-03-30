@@ -1,3 +1,4 @@
+# Change this with caution, it will put your policies in an un-fixable state
 body common control
 {
   bundlesequence => { "update" };
