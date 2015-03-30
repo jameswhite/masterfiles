@@ -2,23 +2,35 @@
 bundle agent update
 {
   vars:
-   "cfroot"               string => "/var/lib/cfengine3";
-   "masterfiles"          string => "$(cfroot)/masterfiles";
-   "inputs"               string => "$(cfroot)/inputs";
-   "distribution_server"  string => "104.237.144.97";
+    "cfroot"               string => "/var/lib/cfengine3";
+    "masterfiles"          string => "$(cfroot)/masterfiles";
+    "inputs"               string => "$(cfroot)/inputs";
+    "config"              string => "$(cfroot)/config";
+    "distribution_server"  string => "104.237.144.97";
+    "feature_branch"       string => "master";
+    distribution_host:
+      "feature_branch"       string => "master";
 
   files:
     any::
       "$(inputs)/cf_promises_validated"
         comment => "Check whether a validation stamp is available for a new policy update",
-        copy_from => u_rcp_mtime("$(masterfiles)/master/cf_promises_validated"),
+        copy_from => u_rcp_mtime("$(masterfiles)/$(feature_branch)/cf_promises_validated"),
         classes => u_if_repaired("validated_updates_ready");
 
     distribution_host|validated_updates_ready::
       "$(inputs)"
         comment => "Copy policy updates from master source on distribution server",
         perms => u_p("644"),
-        copy_from => u_rcp("$(masterfiles)/master/inputs"),
+        copy_from => u_rcp("$(masterfiles)/$(feature_branch)/inputs"),
+        move_obstructions => "true",
+        depth_search => u_recurse("inf"),
+        action => u_immediate;
+
+      "$(config)"
+        comment => "Copy policy config from master source on distribution server",
+        perms => u_p("644"),
+        copy_from => u_rcp("$(masterfiles)/$(feature_branch)/config"),
         move_obstructions => "true",
         depth_search => u_recurse("inf"),
         action => u_immediate;
