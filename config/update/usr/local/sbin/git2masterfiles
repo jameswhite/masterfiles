@@ -60,12 +60,15 @@ for repo in `echo "${GIT_REPOS}"`; do
       (
         cd ${GIT_CACHE}/${repo_dir}
         for ldir in $(ls ${MASTERFILES}); do
-            if [ -z "$(git branch -r | grep -v -- '->' | awk -F'/' '{print $NF}'|grep ${ldir})" ]; then
-                rm -fr ${MASTERFILES}/${ldir}
+            # leave the files alone
+            if [ -d ${MASTERFILES}/${ldir} ]; then
+                if [ -z "$(git branch -r | grep -v -- '->' | awk -F'/' '{print $NF}'|grep ${ldir})" ]; then
+                    rm -fr ${MASTERFILES}/${ldir}
+                fi
             fi
         done
         for lbranch in $(git branch | awk '{print $NF}'); do
-            if [ -z "$(git branch -r | grep -v -- '->' | awk -F'/' '{print $NF}'|grep ${ldir})" ]; then
+            if [ -z "$(git branch -r | grep -v -- '->' | awk -F'/' '{print $NF}'|grep ${lbranch})" ]; then
                 git branch -D ${lbranch}
             fi
         done
