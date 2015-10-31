@@ -8,8 +8,8 @@ bundle agent update
     "config"              string => "$(cfroot)/config";
     "distribution_server"  string => "104.237.144.97";
     "feature_branch"       string => "master";
-    distribution_host:
-      "feature_branch"       string => "master";
+#    distribution_host:
+#      "feature_branch"       string => "master";
 
   files:
     any::
