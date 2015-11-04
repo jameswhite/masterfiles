@@ -1,0 +1,5 @@
+ntpd_flags=
+dhcpd_flags=
+isakmpd_flags="-K"
+ipsec=YES
+ospfd_flags=""
