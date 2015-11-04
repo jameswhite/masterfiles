@@ -9,7 +9,6 @@ hq.thebikeshed.io. 3600 SOA ns1.hq.thebikeshed.io. admin.hq.thebikeshed.io. (
 
     IN NS ns1.hq.thebikeshed.io.
 
-# Client Network
 ns1             IN A 10.255.0.1
 frybook         IN A 10.255.0.2
 frybookair      IN A 10.255.0.3
@@ -41,7 +40,6 @@ hulk            IN A 10.255.0.231
 sobol           IN A 10.255.0.232
 vili            IN A 10.255.0.233
 
-# Server Network
 moe          IN A 10.255.2.51
 larry        IN A 10.255.2.52
 curly        IN A 10.255.2.53
