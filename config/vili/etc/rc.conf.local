@@ -3,3 +3,5 @@ dhcpd_flags=
 isakmpd_flags="-K"
 ipsec=YES
 ospfd_flags=""
+unbound_flags=""
+nsd_flags=""
