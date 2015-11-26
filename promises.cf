@@ -8,7 +8,7 @@ body common control
 
 {
 
-#      bundlesequence => {
+      bundlesequence => {
 #                        # Common bundle first (Best Practice)
 #                          inventory_control,
 #                          @(inventory.bundles),
@@ -28,9 +28,9 @@ body common control
 #                          service_catalogue,
 #                          ha_main,
 #
-#      };
-#
-#      inputs => {
+      };
+
+      inputs => {
 #                 # File definition for global variables and classes
 #                  "cfe_internal/ha/ha_def.cf",
 #                  "def.cf",
@@ -71,18 +71,16 @@ body common control
 #                  "services/file_change.cf",
 #                  "cfe_internal/ha/ha.cf"
 #
-#      };
-#
-#      version => "CFEngine Promises.cf 3.6.2";
-#
-#      # Uncomment to connect to the hub using latest protocol.
-#      #protocol_version => "latest";
-#
-#      #   goal_categories => { "goals", "targets", "milestones" };
-#      #   goal_patterns   => { "goal_.*", "target.*","milestone.*" };
-}
+      };
 
-      #
+      version => "CFEngine Promises.cf 3.6.2";
+
+      # Uncomment to connect to the hub using latest protocol.
+      #protocol_version => "latest";
+
+      #   goal_categories => { "goals", "targets", "milestones" };
+      #   goal_patterns   => { "goal_.*", "target.*","milestone.*" };
+}
 
 bundle common inventory
 # @brief Set up inventory inputs
