@@ -53,16 +53,14 @@ if [ -d ${GIT_CACHE}/${repo_dir}/ ];then
       else
         git checkout ${rbranch} > /dev/null 2>&1
       fi
-#       for dir in $(echo "config inputs modules"); do
-#                [ ! -d "${MASTERFILES}/${rbranch}/${dir}" ] && mkdir -p "${MASTERFILES}/${rbranch}/${dir}/"
-#                [ -d "${GIT_CACHE}/${repo_dir}/${dir}/" ] && rsync -aqzPC --exclude ".git" --exclude "cf_promises_validated" --delete ${GIT_CACHE}/${repo_dir}/${dir}/ ${MASTERFILES}/${rbranch}/${dir}/
-#                (cd ${GIT_CACHE}/${repo_dir}; git log| head -1| awk '{print $NF}') > ${MASTERFILES}/${rbranch}/.git_commit_hash
-#            done
+      [ ! -d "${MASTERFILES}/${rbranch}" ] && mkdir -p "${MASTERFILES}/${rbranch}/"
+      rsync -aqzPC --exclude ".git" --exclude "cf_promises_validated" --delete ${GIT_CACHE}/${repo_dir}/ ${MASTERFILES}/${rbranch}/${rbranch}/
+      (cd ${GIT_CACHE}/${repo_dir}; git log| head -1| awk '{print $NF}') > ${MASTERFILES}/${rbranch}/.git_commit_hash
     done
     [ "$(cd ${GIT_CACHE}/${repo_dir}; git branch | grep '*' | awk '{print $NF}')" != "master" ] && git checkout master >/dev/null 2>&1
   )
-#
-#      # delete all local branches and masterfile directories that are no longer in the remote repository
+
+# delete all local branches and masterfile directories that are no longer in the remote repository
 #      (
 #        cd ${GIT_CACHE}/${repo_dir}
 #        for ldir in $(ls ${MASTERFILES}); do
