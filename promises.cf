@@ -9,24 +9,24 @@ body common control
 {
 
       bundlesequence => {
-                        # Common bundle first (Best Practice)
-                          inventory_control,
-                          @(inventory.bundles),
-                          ha_def,
-                          def,
-                          cfe_internal_hub_vars,
-
-                          # Design Center
-                          cfsketch_run,
-
-                          # autorun system
-                          services_autorun,
-                          @(services_autorun.bundles),
-
-                         # Agent bundle
-                          cfe_internal_management,   # See cfe_internal/CFE_cfengine.cf
-                          service_catalogue,
-                          ha_main,
+#                        # Common bundle first (Best Practice)
+#                          inventory_control,
+#                          @(inventory.bundles),
+#                          ha_def,
+#                          def,
+#                          cfe_internal_hub_vars,
+#
+#                          # Design Center
+#                          cfsketch_run,
+#
+#                          # autorun system
+#                          services_autorun,
+#                          @(services_autorun.bundles),
+#
+#                         # Agent bundle
+#                          cfe_internal_management,   # See cfe_internal/CFE_cfengine.cf
+#                          service_catalogue,
+#                          ha_main,
 
       };
 
