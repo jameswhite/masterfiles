@@ -8,7 +8,7 @@ body common control
 
 {
 
-      bundlesequence => {
+#      bundlesequence => {
 #                        # Common bundle first (Best Practice)
 #                          inventory_control,
 #                          @(inventory.bundles),
@@ -27,59 +27,59 @@ body common control
 #                          cfe_internal_management,   # See cfe_internal/CFE_cfengine.cf
 #                          service_catalogue,
 #                          ha_main,
-
-      };
-
-      inputs => {
-                 # File definition for global variables and classes
-                  "cfe_internal/ha/ha_def.cf",
-                  "def.cf",
-
-                # Inventory policy
-                  @(inventory.inputs),
-
-                 # Design Center
-                  "sketches/meta/api-runfile.cf",
-                  @(cfsketch_g.inputs),
-
-                 # CFEngine internal processes for Mission Portal mostly
-                  "cfe_internal/CFE_cfengine.cf",
-                  "cfe_internal/CFE_hub_specific.cf",
-                  "cfe_internal/CFE_knowledge.cf",
-
-                 # Control body for all CFEngine robot agents
-                  @(cfengine_controls.inputs),
-
-                 # COPBL/Custom libraries.  Eventually this should use wildcards.
-                  @(cfengine_stdlib.inputs),
-
-                 # Reports
-                  @(cfengine_reports.inputs),
-
-                  # autorun system
-                  @(services_autorun.inputs),
-
-                  # Add update files to build Knowledge Map relationship
-                  "update/update_bins.cf",
-                  "update/cfe_internal_dc_workflow.cf",
-                  "update/cfe_internal_local_git_remote.cf",
-                  "update/cfe_internal_update_from_repository.cf",
-                  "update/update_policy.cf",
-                  "update/update_processes.cf",
-
-                # List of services here
-                  "services/file_change.cf",
-                  "cfe_internal/ha/ha.cf"
-
-      };
-
-      version => "CFEngine Promises.cf 3.6.2";
-
-      # Uncomment to connect to the hub using latest protocol.
-      #protocol_version => "latest";
-
-      #   goal_categories => { "goals", "targets", "milestones" };
-      #   goal_patterns   => { "goal_.*", "target.*","milestone.*" };
+#
+#      };
+#
+#      inputs => {
+#                 # File definition for global variables and classes
+#                  "cfe_internal/ha/ha_def.cf",
+#                  "def.cf",
+#
+#                # Inventory policy
+#                  @(inventory.inputs),
+#
+#                 # Design Center
+#                  "sketches/meta/api-runfile.cf",
+#                  @(cfsketch_g.inputs),
+#
+#                 # CFEngine internal processes for Mission Portal mostly
+#                  "cfe_internal/CFE_cfengine.cf",
+#                  "cfe_internal/CFE_hub_specific.cf",
+#                  "cfe_internal/CFE_knowledge.cf",
+#
+#                 # Control body for all CFEngine robot agents
+#                  @(cfengine_controls.inputs),
+#
+#                 # COPBL/Custom libraries.  Eventually this should use wildcards.
+#                  @(cfengine_stdlib.inputs),
+#
+#                 # Reports
+#                  @(cfengine_reports.inputs),
+#
+#                  # autorun system
+#                  @(services_autorun.inputs),
+#
+#                  # Add update files to build Knowledge Map relationship
+#                  "update/update_bins.cf",
+#                  "update/cfe_internal_dc_workflow.cf",
+#                  "update/cfe_internal_local_git_remote.cf",
+#                  "update/cfe_internal_update_from_repository.cf",
+#                  "update/update_policy.cf",
+#                  "update/update_processes.cf",
+#
+#                # List of services here
+#                  "services/file_change.cf",
+#                  "cfe_internal/ha/ha.cf"
+#
+#      };
+#
+#      version => "CFEngine Promises.cf 3.6.2";
+#
+#      # Uncomment to connect to the hub using latest protocol.
+#      #protocol_version => "latest";
+#
+#      #   goal_categories => { "goals", "targets", "milestones" };
+#      #   goal_patterns   => { "goal_.*", "target.*","milestone.*" };
 }
 
       #
