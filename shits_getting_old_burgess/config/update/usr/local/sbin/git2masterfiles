@@ -5,7 +5,7 @@ export PATH="/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/var/c
 export GIT_SOURCE="git@github.com:websages/masterfiles.git"
 
 # Where we stage git GitHub -> /var/cache/git
-export MASTERFILE_REPO="masterfiles"
+export MASTERFILES_REPO="masterfiles"
 export GIT_CACHE="/var/cache/git"
 if [ ! -d ${GIT_CACHE} ]; then mkdir -p ${GIT_CACHE};fi
 
