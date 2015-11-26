@@ -58,8 +58,8 @@ if [ -d ${GIT_CACHE}/${repo_dir}/ ];then
 #                [ -d "${GIT_CACHE}/${repo_dir}/${dir}/" ] && rsync -aqzPC --exclude ".git" --exclude "cf_promises_validated" --delete ${GIT_CACHE}/${repo_dir}/${dir}/ ${MASTERFILES}/${rbranch}/${dir}/
 #                (cd ${GIT_CACHE}/${repo_dir}; git log| head -1| awk '{print $NF}') > ${MASTERFILES}/${rbranch}/.git_commit_hash
 #            done
-#        done
-#        [ "$(cd ${GIT_CACHE}/${repo_dir}; git branch | grep '*' | awk '{print $NF}')" != "master" ] && git checkout master >/dev/null 2>&1
+    done
+    [ "$(cd ${GIT_CACHE}/${repo_dir}; git branch | grep '*' | awk '{print $NF}')" != "master" ] && git checkout master >/dev/null 2>&1
   )
 #
 #      # delete all local branches and masterfile directories that are no longer in the remote repository
@@ -79,6 +79,6 @@ if [ -d ${GIT_CACHE}/${repo_dir}/ ];then
 #            fi
 #        done
 #      )
-#    fi
+fi
 ## copy the masterfiles failsafe.cf to masterfiles root
 # cp ${MASTERFILES}/master/inputs/{failsafe.cf,update.cf} ${MASTERFILES}
