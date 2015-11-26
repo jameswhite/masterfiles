@@ -54,7 +54,7 @@ if [ -d ${GIT_CACHE}/${repo_dir}/ ];then
         git checkout ${rbranch} > /dev/null 2>&1
       fi
       [ ! -d "${MASTERFILES}/${rbranch}" ] && mkdir -p "${MASTERFILES}/${rbranch}/"
-      rsync -aqzPC --exclude ".git" --exclude "cf_promises_validated" --delete ${GIT_CACHE}/${repo_dir}/ ${MASTERFILES}/${rbranch}/${rbranch}/
+      rsync -aqzPC --exclude ".git" --exclude "cf_promises_validated" --delete ${GIT_CACHE}/${repo_dir}/ ${MASTERFILES}/${rbranch}/
       (cd ${GIT_CACHE}/${repo_dir}; git log| head -1| awk '{print $NF}') > ${MASTERFILES}/${rbranch}/.git_commit_hash
     done
     [ "$(cd ${GIT_CACHE}/${repo_dir}; git branch | grep '*' | awk '{print $NF}')" != "master" ] && git checkout master >/dev/null 2>&1
