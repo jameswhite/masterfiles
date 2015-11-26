@@ -33,5 +33,6 @@ EOF
   rsync -avzP  /var/lib/cfengine3/masterfiles/ /var/lib/cfengine3/inputs/
 )
 
+cf-agent --bootstrap cfengine.wcyd.org
 cf-agent -Kv 
 ```

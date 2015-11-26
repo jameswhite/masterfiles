@@ -2,8 +2,12 @@
 export PATH="/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/var/cfengine/bin"
 export GIT_CACHE="/var/cache/git"
 export MASTERFILES="/var/lib/cfengine3/masterfiles"
-export GIT_SOURCE="https://github.com/jameswhite/masterfiles.git"
+export GIT_SOURCE="https://github.com/websages/masterfiles.git"
 export GIT_REPOS="masterfiles"
+
+# where git2masterfiles is in repo
+export RELATIVE_GIT2MASTERFILES="shits_getting_old_burgess/config/update/usr/local/sbin/git2masterfiles" 
+
 umask 0022
 
 SELF="$(basename $0)"
@@ -30,9 +34,9 @@ for repo in `echo "${GIT_REPOS}"`; do
     fi
 
     # make sure we have the correct copy of this script
-    NEW_MD5=$(md5sum ${GIT_CACHE}/${repo_dir}/config/update/${FQPATH} | awk '{print $1}')
+    NEW_MD5=$(md5sum ${GIT_CACHE}/${repo_dir}/${RELATIVE_GIT2MASTERFILES}| awk '{print $1}')
     if [ "${OLD_MD5}" != "${NEW_MD5}" ]; then
-        install -m 0744 ${GIT_CACHE}/${repo_dir}/config/update/${FQPATH} ${FQPATH}
+        install -m 0744 ${GIT_CACHE}/${repo_dir}/${RELATIVE_GIT2MASTERFILES} ${FQPATH}
         exec ${FQPATH}
     fi
 
