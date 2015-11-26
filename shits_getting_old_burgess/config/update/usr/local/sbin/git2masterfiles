@@ -13,6 +13,9 @@ if [ ! -d ${GIT_CACHE} ]; then mkdir -p ${GIT_CACHE};fi
 export MASTERFILES="/var/lib/cfengine3/masterfiles"
 if [ ! -d ${MASTERFILES} ]; then mkdir -p ${MASTERFILES}; fi
 
+# where the active policies live
+export INPUTS="/var/lib/cfengine3/inputs"
+
 # where git2masterfiles is in repo (temp hack)
 export RELATIVE_GIT2MASTERFILES="shits_getting_old_burgess/config/update/usr/local/sbin/git2masterfiles" 
 
@@ -78,5 +81,7 @@ if [ -d ${GIT_CACHE}/${repo_dir}/ ];then
    done
   )
 fi
-## copy the masterfiles failsafe.cf to masterfiles root
-# cp ${MASTERFILES}/master/inputs/{failsafe.cf,update.cf} ${MASTERFILES}
+# 
+deploy_branch=$(cat /var/lib/cfengine3/current_branch 2>/dev/null)
+[ -z "${deploy_branch}" ] && deploy_branch="master"
+rsync -aqzPC --exclude ".git" --exclude "cf_promises_validated" --delete ${MASTERFILES}/${current_branch}/ ${INPUTS}/
