@@ -82,6 +82,6 @@ if [ -d ${GIT_CACHE}/${repo_dir}/ ];then
   )
 fi
 # 
-deploy_branch=$(cat /var/lib/cfengine3/current_branch 2>/dev/null)
-[ -z "${deploy_branch}" ] && deploy_branch="master"
+current_branch=$(cat /var/lib/cfengine3/current_branch 2>/dev/null)
+[ -z "${current_branch}" ] && current_branch="master"
 rsync -aqzPC --exclude ".git" --exclude "cf_promises_validated" --delete ${MASTERFILES}/${current_branch}/ ${INPUTS}/
