@@ -61,22 +61,22 @@ if [ -d ${GIT_CACHE}/${repo_dir}/ ];then
   )
 
 # delete all local branches and masterfile directories that are no longer in the remote repository
-#      (
-#        cd ${GIT_CACHE}/${repo_dir}
-#        for ldir in $(ls ${MASTERFILES}); do
-#            # leave the files alone
-#            if [ -d ${MASTERFILES}/${ldir} ]; then
-#                if [ -z "$(git branch -r | grep -v -- '->' | awk -F'/' '{print $NF}'|grep ${ldir})" ]; then
-#                    rm -fr ${MASTERFILES}/${ldir}
-#                fi
-#            fi
-#        done
-#        for lbranch in $(git branch | awk '{print $NF}'); do
-#            if [ -z "$(git branch -r | grep -v -- '->' | awk -F'/' '{print $NF}'|grep ${lbranch})" ]; then
-#                git branch -D ${lbranch}
-#            fi
-#        done
-#      )
+  (
+    cd ${GIT_CACHE}/${repo_dir}
+    for ldir in $(ls ${MASTERFILES}); do
+      if [ -z "$(git branch -r | grep -v -- '->' | awk -F'/' '{print $NF}'|grep ${ldir})" ]; then
+        rm -fr ${MASTERFILES}/${ldir}
+      fi
+    done
+   
+   # Clean up the local branches
+   for lbranch in $(git branch | awk '{print $NF}'); do
+     if [ -z "$(git branch -r | grep -v -- '->' | awk -F'/' '{print $NF}'|grep ${lbranch})" ]; then
+       git branch -D ${lbranch}
+     fi
+    done
+  )
 fi
-## copy the masterfiles failsafe.cf to masterfiles root
+
+# copy the masterfiles failsafe.cf to masterfiles root
 # cp ${MASTERFILES}/master/inputs/{failsafe.cf,update.cf} ${MASTERFILES}
