@@ -64,19 +64,19 @@ if [ -d ${GIT_CACHE}/${repo_dir}/ ];then
   (
     cd ${GIT_CACHE}/${repo_dir}
     git remote prune origin
-    for branch_dir in $(ls ${MASTERFILES}); do
-      if [ -z "$(git branch -r | grep -v -- '->' | awk -F'/' '{print $NF}'|grep ${branch_dir})" ]; then
-        rm -fr ${MASTERFILES}/${branch_dir}
+    for ldir in $(ls ${MASTERFILES}); do
+      if [ -z "$(git branch -r | grep -v -- '->' | awk -F'/' '{print $NF}'|grep ${ldir})" ]; then
+        rm -fr ${MASTERFILES}/${ldir}
       fi
     done
    
    # Clean up the local branches
+   for lbranch in $(git branch | awk '{print $NF}'); do
      if [ -z "$(git branch -r | grep -v -- '->' | awk -F'/' '{print $NF}'|grep ${lbranch})" ]; then
        git branch -D ${lbranch}
      fi
-    done
+   done
   )
 fi
-
-# copy the masterfiles failsafe.cf to masterfiles root
+## copy the masterfiles failsafe.cf to masterfiles root
 # cp ${MASTERFILES}/master/inputs/{failsafe.cf,update.cf} ${MASTERFILES}
