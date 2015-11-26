@@ -24,7 +24,6 @@ export SELF="$(basename $0)"; DIR="$(dirname $0)"; FQDIR="$(cd ${DIR}; pwd)"; FQ
 # the md5 of the script we initially ran
 export OLD_MD5="$(md5sum ${FQPATH} | awk '{print $1}')"
 
-#(
 cd ${GIT_CACHE};
 # git clone || git update the repository (strip off the .git if present)
 repo_dir=$(basename  ${MASTERFILES_REPO}|sed -e 's/\.git$//g')
@@ -43,25 +42,25 @@ if [ "${OLD_MD5}" != "${NEW_MD5}" ]; then
   exec ${FQPATH}
 fi
 
-#    # checkout all the remote branches locally, rsync them to masterfiles/<branch_name>
-#    if [ -d ${GIT_CACHE}/${repo_dir}/ ];then
-#      (cd ${GIT_CACHE}/${repo_dir}; git fetch > /dev/null 2>&1)
-#      (
-#        cd ${GIT_CACHE}/${repo_dir}
-#        for rbranch in $(git branch -r | grep -v -- '->' | awk -F'/' '{print $NF}'); do
-#            if [ -z "$(git branch| grep ${rbranch})" ]; then
-#                git checkout -b ${rbranch} origin/${rbranch} > /dev/null 2>&1
-#            else
-#                git checkout ${rbranch} > /dev/null 2>&1
-#            fi
-#            for dir in $(echo "config inputs modules"); do
+# checkout all the remote branches locally, rsync them to masterfiles/<branch_name>
+if [ -d ${GIT_CACHE}/${repo_dir}/ ];then
+  (cd ${GIT_CACHE}/${repo_dir}; git fetch > /dev/null 2>&1)
+  (
+    cd ${GIT_CACHE}/${repo_dir}
+    for rbranch in $(git branch -r | grep -v -- '->' | awk -F'/' '{print $NF}'); do
+      if [ -z "$(git branch| grep ${rbranch})" ]; then
+        git checkout -b ${rbranch} origin/${rbranch} > /dev/null 2>&1
+      else
+        git checkout ${rbranch} > /dev/null 2>&1
+      fi
+#       for dir in $(echo "config inputs modules"); do
 #                [ ! -d "${MASTERFILES}/${rbranch}/${dir}" ] && mkdir -p "${MASTERFILES}/${rbranch}/${dir}/"
 #                [ -d "${GIT_CACHE}/${repo_dir}/${dir}/" ] && rsync -aqzPC --exclude ".git" --exclude "cf_promises_validated" --delete ${GIT_CACHE}/${repo_dir}/${dir}/ ${MASTERFILES}/${rbranch}/${dir}/
 #                (cd ${GIT_CACHE}/${repo_dir}; git log| head -1| awk '{print $NF}') > ${MASTERFILES}/${rbranch}/.git_commit_hash
 #            done
 #        done
 #        [ "$(cd ${GIT_CACHE}/${repo_dir}; git branch | grep '*' | awk '{print $NF}')" != "master" ] && git checkout master >/dev/null 2>&1
-#      )
+  )
 #
 #      # delete all local branches and masterfile directories that are no longer in the remote repository
 #      (
