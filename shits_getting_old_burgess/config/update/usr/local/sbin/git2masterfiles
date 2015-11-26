@@ -53,8 +53,10 @@ if [ -d ${GIT_CACHE}/${repo_dir}/ ];then
     for rbranch in $(git branch -r | grep -v -- '->' | awk -F'/' '{print $NF}'); do
       if [ -z "$(git branch| grep ${rbranch})" ]; then
         git checkout -b ${rbranch} origin/${rbranch} > /dev/null 2>&1
+        git pull origin ${rbranch} > /dev/null 2>&1
       else
         git checkout ${rbranch} > /dev/null 2>&1
+        git pull origin ${rbranch} > /dev/null 2>&1
       fi
       [ ! -d "${MASTERFILES}/${rbranch}" ] && mkdir -p "${MASTERFILES}/${rbranch}/"
       rsync -aqzPC --exclude ".git" --exclude "cf_promises_validated" --delete ${GIT_CACHE}/${repo_dir}/ ${MASTERFILES}/${rbranch}/
