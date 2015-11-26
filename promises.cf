@@ -255,10 +255,10 @@ bundle common inventory
 #       usebundle => change_management;
 # 
 # }
-# 
-# # special body for update/*.cf compatibility
-# body classes u_kept_successful_command
-# # @brief Set command to "kept" instead of "repaired" if it returns 0
-# {
-#       kept_returncodes => { "0" };
-# }
+
+# special body for update/*.cf compatibility
+body classes u_kept_successful_command
+# @brief Set command to "kept" instead of "repaired" if it returns 0
+{
+      kept_returncodes => { "0" };
+}
