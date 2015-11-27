@@ -129,7 +129,8 @@ bundle agent update_reports
 {
   reports:
 
-      "current_branch" printfile = "CURRENT_BRANCH: $(current.branch)";
+      "fuck" printfile = "FUCK";
+      "current_branch" string => "CURRENT_BRANCH: $(current.branch)";
 };
 
 body classes u_kept_successful_command
