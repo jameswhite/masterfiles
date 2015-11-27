@@ -1,0 +1,126 @@
+#!/bin/sh
+#
+# openvpn rc.d script for OpenBSD - by Chris Pfaff
+#
+# This script acts like normal rc script if the openvpn_flags in rc.conf.local are set to typical openvpn parameters
+# But if openvpn_flags are set to special string "-use-etc-hostname-" then script acts in special way:
+#  It starts the openvpns configured in /etc/hostname.if (eg in /etc/hostname.tun0)
+#  It will start multiple openvpn - each with its own config defined in /etc/hostname.tun*
+#  If script detects that a process is already running - it does not try to start again but returns with ok status
+#  It supports usual parameters like: start, check, stop, restart, reload
+#
+# -d = debug mode - use to see verbose information about executed commands
+#
+
+
+daemon="/usr/local/sbin/openvpn"
+
+. /etc/rc.d/rc.subr
+
+if [ "$daemon_flags" != "-use-etc-hostname-" ]; then 
+    # handle as usual
+    rc_cmd $1
+else
+    #special unusual handling
+    #start openvpns defined in /etc/hostname.*
+
+    # Edit if necessary
+    # This pattern is being used for scanning /etc/hostname.tun*
+    # and for finding running openvpn processes
+    # and for searching individual openvpn process - then patter is appended with: [^a-zA-Z]${hnif}([^0-9]|$)
+    processpattern='openvpn.*--daemon.*'
+
+    [ -n "${_RC_DEBUG}" ] || _n="-n"
+    PGREPFLAG="-f"
+    PKILLFLAG="-f"
+    [ -z "${_RC_DEBUG}" ] && PKILLFLAG="$PGREPFLAG -q"  # quiet if not debug mode
+    [ -z "${_RC_DEBUG}" ] && PGREPFLAG="$PGREPFLAG -q"  # quiet if not debug mode
+    [ -n "${_RC_DEBUG}" ] && PGREPFLAG="$PGREPFLAG -l"  # list process name in debug mode
+    case "$1" in
+    start|check)
+        [ "$1" == "start" ] && echo $_n "${INRC:+ }${_name} "
+        if [ X"${daemon_flags}" = X"NO" ]; then
+            _rc_err "$0: need -f to force $1 since ${_name}_flags=NO"
+            exit 1
+        fi
+        allprocstatus=0
+        # search all hostname.tun* files which contain openvpn startup command
+        hostnamepattern="/etc/hostname.tun*"
+        for hostnamefile in $hostnamepattern; do
+            if [ "$hostnamefile" = "$hostnamepattern" ]; then
+                [ -n "${_RC_DEBUG}" ] && echo "no files $hostnamepattern"
+                [ "$2" == "quiet" ] && exit 1
+                _rc_exit failed
+            fi
+            [ -n "${_RC_DEBUG}" ] && echo
+            if grep -v "^[  ]*#" "$hostnamefile" | grep -q "$processpattern" ; then
+                [ -n "${_RC_DEBUG}" ] && echo "File $hostnamefile is openvpn file - will be started/checked"
+            else
+                [ -n "${_RC_DEBUG}" ] && echo "File $hostnamefile is not related to openvpn - skipping"
+                continue
+            fi
+            # extract interface name from filename
+            hnif=${hostnamefile##/etc/hostname\.}
+            if [ -z "$hnif" ]; then
+                [ -n "${_RC_DEBUG}" ] && echo "Cannot get interface name from $hostnamefile"
+                hnifstatus=1
+                allprocstatus=1
+                continue
+            fi
+
+            # check if process is already running for this network interface - if yes, do nothing and result is ok 
+            hnifprocesspattern="${processpattern}[^a-zA-Z]${hnif}([^0-9]|$)"  # eg server_tun0.conf or client_tun0.conf or -dev tun0
+            [ -n "${_RC_DEBUG}" ] && echo "Executing: pgrep ${PGREPFLAG} \"$hnifprocesspattern\""
+            pgrep ${PGREPFLAG} "$hnifprocesspattern" && continue
+
+            if [ "$1" == "check" ]; then
+                [ -n "${_RC_DEBUG}" ] && echo "Missing openvpn process for ${hnif} - see $hostnamefile"
+                hnifstatus=1
+            else
+                echo -n "$hnif "  # write name of started if
+                # if process is not running for this interface - start it
+                [ -n "${_RC_DEBUG}" ] && echo "Executing: /bin/sh /etc/netstart $hnif "
+                /bin/sh /etc/netstart $hnif; hnifstatus=$?
+                [ -n "${_RC_DEBUG}" ] && echo " status: $hnifstatus"  # etc/hostname scripts may return 0 even if error occurred
+            fi
+            [ $hnifstatus -ne 0 ] && allprocstatus=1
+        done
+        # if ANY failed then return failure - (simple exit if check in quiet mode)
+        [ "$2" == "quiet" -a $allprocstatus -ne 0 ] && exit 1
+        [ $allprocstatus -ne 0 ] && _rc_exit failed
+        [ "$2" == "quiet" ] && exit 0
+        _rc_exit ok
+        ;;
+    stop)
+        echo $_n "${INRC:+ }${_name} "
+        [ -n "${_RC_DEBUG}" ] && echo "Executing: pkill ${PKILLFLAG} \"$processpattern\""
+        pkill ${PKILLFLAG} "$processpattern"
+        countdown=10
+        while [ "((countdown--))" -gt 0 ]; do
+            pgrep ${PKILLFLAG} "$processpattern" >/dev/null || continue
+            sleep 1;
+        done;
+        [ -n "${_RC_DEBUG}" ] && echo "Executing: $0 ${_RC_DEBUG} ${_RC_FORCE} check quiet"
+        $0 ${_RC_DEBUG} ${_RC_FORCE} check quiet && _rc_exit failed
+        _rc_exit ok
+        ;;
+    reload)
+        echo $_n "${INRC:+ }${_name} "
+        [ -n "${_RC_DEBUG}" ] && echo "WARNING: Reload might crash the process if process is chrooted"
+        [ -n "${_RC_DEBUG}" ] && echo "Executing: pkill -HUP ${PKILLFLAG} \"$processpattern\""
+        pkill -HUP ${PKILLFLAG} "$processpattern" || _rc_exit failed
+        sleep 10;
+        [ -n "${_RC_DEBUG}" ] && echo "Executing: $0 ${_RC_DEBUG} ${_RC_FORCE} check quiet"
+        [ -n "${_RC_DEBUG}" ] && echo "WARNING: Reload might crash the process if process is chrooted"
+        $0 ${_RC_DEBUG} ${_RC_FORCE} check quiet || _rc_exit failed
+        _rc_exit ok
+        ;;
+    restart)
+        $0 ${_RC_DEBUG} ${_RC_FORCE} stop &&
+            $0 ${_RC_DEBUG} ${_RC_FORCE} start
+        ;;
+    *)
+        _rc_usage
+        ;;
+    esac
+fi

@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+
+PROFILE=$1
+OUTPUT=$1.ovpn
+CA=pki/ca.crt
+CERT=pki/issued/$1.crt
+KEY=pki/private/$1.key
+TLS=pki/ta.key
+
+./easyrsa build-client-full $PROFILE nopass
+
+cat <<EOF > $OUTPUT
+client
+remote vpn.thebikeshed.io 1194
+proto udp
+dev tun
+persist-key
+persist-tun
+nobind
+comp-lzo
+verb 3
+key-direction 1
+<ca>
+EOF
+
+cat $CA | while read line; do
+    echo $line >> $OUTPUT
+done
+
+cat <<EOF >> $OUTPUT
+</ca>
+<server>
+EOF
+
+CERT_DATA=0
+cat $CERT | while read line; do
+    if [[ $line =~ 'BEGIN CERTIFICATE' ]]; then
+      CERT_DATA=1
+    fi
+
+    if [ $CERT_DATA -eq 1 ]; then
+      echo $line >> $OUTPUT
+    fi
+done
+
+cat <<EOF >> $OUTPUT
+</server>
+<tls-auth>
+EOF
+
+cat $TLS | while read line; do
+    echo $line >> $OUTPUT
+done
+
+echo "</tls-auth>" >> $OUTPUT
