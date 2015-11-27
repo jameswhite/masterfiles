@@ -9,6 +9,7 @@ body common control
       bundlesequence => {
 #                          "ha_def",
                           "update_def",
+                          "update_reports",
 #                          "cfe_internal_dc_workflow",
 #                          "cfe_internal_update_policy",
 #                          "cfe_internal_update_bins",
@@ -122,10 +123,14 @@ bundle common update_def
 
       "cfengine_internal_purge_policies" expression => "!any";
 
-  reports:
-      "current_branch"
-        printfile => "CURRENT_BRANCH: $(current.branch)";
 }
+
+bundle agent update_reports
+{
+  reports:
+
+      "literal string or file refererence" printfile = printfile_body,
+};
 
 body classes u_kept_successful_command
 # @brief Set command to "kept" instead of "repaired" if it returns 0
