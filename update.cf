@@ -44,6 +44,8 @@ body agent control
 bundle common update_def
 {
   vars:
+     "current_branch"  string => execresult("/bin/cat /var/lib/cfengine3/current_branch", "noshell");
+
       "input_name_patterns" slist => { ".*\.cf",".*\.dat",".*\.txt", ".*\.conf", ".*\.mustache",
                                        "cf_promises_release_id", ".*\.json" },
       comment => "Filename patterns to match when updating the policy (see update/update_policy.cf)",
@@ -120,6 +122,8 @@ bundle common update_def
 
       "cfengine_internal_purge_policies" expression => "!any";
 
+  reports:
+      "CURRENT_BRANCH: $(current.branch)"
 }
 
 body classes u_kept_successful_command
