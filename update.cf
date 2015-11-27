@@ -123,7 +123,8 @@ bundle common update_def
       "cfengine_internal_purge_policies" expression => "!any";
 
   reports:
-      "current_branch" printfile = "CURRENT_BRANCH: $(current.branch)";
+      "current_branch"
+        printfile => "CURRENT_BRANCH: $(current.branch)";
 }
 
 body classes u_kept_successful_command
