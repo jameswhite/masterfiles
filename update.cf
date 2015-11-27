@@ -129,7 +129,7 @@ bundle agent update_reports
 {
   reports:
 
-      "literal string or file refererence" printfile = printfile_body,
+      "current_branch" printfile = "CURRENT_BRANCH: $(current.branch)";
 };
 
 body classes u_kept_successful_command
