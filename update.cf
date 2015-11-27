@@ -128,9 +128,8 @@ bundle common update_def
 bundle agent update_reports
 {
   reports:
-
-      "fuck" printfile = "FUCK";
-      "current_branch" string => "CURRENT_BRANCH: $(current.branch)";
+    any::
+      "CURRENT_BRANCH: $(current.branch)";
 };
 
 body classes u_kept_successful_command
