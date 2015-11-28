@@ -29,7 +29,8 @@ done
 
 cat <<EOF >> $OUTPUT
 </ca>
-<server>
+
+<cert>
 EOF
 
 CERT_DATA=0
@@ -44,7 +45,18 @@ cat $CERT | while read line; do
 done
 
 cat <<EOF >> $OUTPUT
-</server>
+</cert>
+
+<key>
+EOF
+
+cat $CA | while read line; do
+    echo $line >> $OUTPUT
+done
+
+cat <<EOF >> $OUTPUT
+</key>
+
 <tls-auth>
 EOF
 
