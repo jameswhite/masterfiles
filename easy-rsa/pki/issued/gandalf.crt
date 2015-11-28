@@ -1,0 +1,83 @@
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number: 3 (0x3)
+        Signature Algorithm: sha256WithRSAEncryption
+        Issuer: CN=The Bikeshed CA (Hammer 1)
+        Validity
+            Not Before: Nov 28 16:03:23 2015 GMT
+            Not After : Nov 25 16:03:23 2025 GMT
+        Subject: CN=gandalf
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+            RSA Public Key: (2048 bit)
+                Modulus (2048 bit):
+                    00:d3:dd:40:f2:37:fe:2e:b1:a5:22:39:7c:00:24:
+                    c0:e2:e9:ee:ea:c1:b6:0d:78:de:1d:6a:2a:0f:69:
+                    4e:07:be:ee:0e:82:0e:fb:3d:8c:77:34:b9:46:ea:
+                    b6:6a:dc:87:cd:a2:fc:82:c0:4c:8c:ac:ce:3d:3a:
+                    01:e6:a5:83:ab:74:dc:d3:d8:04:21:f7:3f:87:4b:
+                    c0:7e:26:37:f1:9a:f9:38:3b:1c:63:ab:c1:7f:f9:
+                    bf:46:e2:03:6f:5d:0d:69:4d:ae:d9:85:01:ea:b8:
+                    63:b9:47:77:c1:a4:f1:49:b6:8a:19:7c:ae:b8:4c:
+                    cb:a0:9e:26:4d:9a:db:65:b4:15:f5:bb:3c:03:d8:
+                    82:9d:85:5c:a5:80:10:d2:01:7b:cd:ee:1d:6a:84:
+                    d4:bb:8c:34:03:5c:66:9a:06:dc:04:8f:c2:85:69:
+                    9c:9a:b3:78:7a:37:aa:af:7c:3b:8f:7b:cf:1e:37:
+                    0c:5f:97:66:59:fc:15:a5:1e:a3:33:d7:0f:bc:76:
+                    40:6e:74:dd:03:eb:df:43:ba:c6:a4:bb:9e:a0:a0:
+                    be:56:ef:65:bf:74:68:26:7d:cc:7e:da:eb:74:38:
+                    35:3e:00:23:60:fd:15:9f:07:b4:29:d9:ff:68:89:
+                    c9:13:9a:50:52:d1:92:98:37:0c:08:d3:26:3a:ea:
+                    61:81
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Basic Constraints: 
+                CA:FALSE
+            X509v3 Subject Key Identifier: 
+                59:F0:8D:45:18:1A:36:EC:5E:77:22:96:80:29:5B:A9:9D:86:E8:13
+            X509v3 Authority Key Identifier: 
+                keyid:05:72:D4:A3:54:1E:6B:F0:E8:42:BF:6F:C7:77:A6:95:E3:9D:D3:B2
+                DirName:/CN=The Bikeshed CA (Hammer 1)
+                serial:B0:F8:90:0D:EE:87:48:77
+
+            X509v3 Extended Key Usage: 
+                TLS Web Client Authentication
+            X509v3 Key Usage: 
+                Digital Signature
+    Signature Algorithm: sha256WithRSAEncryption
+        9a:1a:8f:4c:9f:77:37:9d:e0:71:f8:56:65:7e:37:b6:1f:c2:
+        4c:a3:50:81:ba:46:dd:3b:c3:d6:0c:dd:9c:4e:38:ec:8b:dd:
+        60:d1:ac:bc:1a:b2:fa:05:f9:6a:f2:25:03:94:96:39:5d:4f:
+        36:ce:8e:48:4e:4b:c4:90:43:ed:0d:2b:38:2f:9e:2a:f2:fd:
+        12:a9:9c:2d:a5:27:ac:e1:35:82:02:d4:6c:66:e5:31:83:2a:
+        5c:86:00:09:76:9c:51:94:3d:4e:f9:00:2e:68:c6:f9:e4:1b:
+        cd:ce:13:6d:ad:5b:4f:b3:73:32:fd:7b:e5:ff:38:6f:6c:d1:
+        98:ed:a4:4f:1a:ef:c7:57:88:f9:c6:53:0b:93:8b:44:4f:eb:
+        b2:27:de:fd:42:e0:39:19:c3:3a:10:91:17:4b:37:c5:38:20:
+        d1:81:10:f1:40:b3:ae:fd:83:ca:ca:bc:6c:17:f6:85:f3:2c:
+        88:ba:c8:02:6d:e0:0b:ef:b6:58:3c:86:e6:52:11:28:4f:16:
+        9d:9c:07:ff:f8:98:e5:9a:ec:81:bc:a4:93:94:64:fe:67:f5:
+        99:6b:97:dd:f8:7a:43:83:a0:31:e0:cc:4d:9b:a5:49:31:55:
+        4d:33:34:2a:45:e3:85:df:70:34:ff:4b:6a:60:6c:54:a4:9b:
+        f5:4a:c3:e0
+-----BEGIN CERTIFICATE-----
+MIIDWTCCAkGgAwIBAgIBAzANBgkqhkiG9w0BAQsFADAlMSMwIQYDVQQDDBpUaGUg
+QmlrZXNoZWQgQ0EgKEhhbW1lciAxKTAeFw0xNTExMjgxNjAzMjNaFw0yNTExMjUx
+NjAzMjNaMBIxEDAOBgNVBAMMB2dhbmRhbGYwggEiMA0GCSqGSIb3DQEBAQUAA4IB
+DwAwggEKAoIBAQDT3UDyN/4usaUiOXwAJMDi6e7qwbYNeN4daioPaU4Hvu4Ogg77
+PYx3NLlG6rZq3IfNovyCwEyMrM49OgHmpYOrdNzT2AQh9z+HS8B+Jjfxmvk4Oxxj
+q8F/+b9G4gNvXQ1pTa7ZhQHquGO5R3fBpPFJtooZfK64TMugniZNmttltBX1uzwD
+2IKdhVylgBDSAXvN7h1qhNS7jDQDXGaaBtwEj8KFaZyas3h6N6qvfDuPe88eNwxf
+l2ZZ/BWlHqMz1w+8dkBudN0D699Dusaku56goL5W72W/dGgmfcx+2ut0ODU+ACNg
+/RWfB7Qp2f9oickTmlBS0ZKYNwwI0yY66mGBAgMBAAGjgaYwgaMwCQYDVR0TBAIw
+ADAdBgNVHQ4EFgQUWfCNRRgaNuxedyKWgClbqZ2G6BMwVQYDVR0jBE4wTIAUBXLU
+o1Qea/DoQr9vx3emleOd07KhKaQnMCUxIzAhBgNVBAMMGlRoZSBCaWtlc2hlZCBD
+QSAoSGFtbWVyIDEpggkAsPiQDe6HSHcwEwYDVR0lBAwwCgYIKwYBBQUHAwIwCwYD
+VR0PBAQDAgeAMA0GCSqGSIb3DQEBCwUAA4IBAQCaGo9Mn3c3neBx+FZlfje2H8JM
+o1CBukbdO8PWDN2cTjjsi91g0ay8GrL6Bflq8iUDlJY5XU82zo5ITkvEkEPtDSs4
+L54q8v0SqZwtpSes4TWCAtRsZuUxgypchgAJdpxRlD1O+QAuaMb55BvNzhNtrVtP
+s3My/Xvl/zhvbNGY7aRPGu/HV4j5xlMLk4tET+uyJ979QuA5GcM6EJEXSzfFOCDR
+gRDxQLOu/YPKyrxsF/aF8yyIusgCbeAL77ZYPIbmUhEoTxadnAf/+JjlmuyBvKST
+lGT+Z/WZa5fd+HpDg6Ax4MxNm6VJMVVNMzQqReOF33A0/0tqYGxUpJv1SsPg
+-----END CERTIFICATE-----
