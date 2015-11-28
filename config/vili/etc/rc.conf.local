@@ -5,3 +5,4 @@ ipsec=YES
 ospfd_flags=""
 unbound_flags=""
 nsd_flags=""
+openvpn_flags="-use-etc-hostname-"
