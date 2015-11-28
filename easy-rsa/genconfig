@@ -50,7 +50,7 @@ cat <<EOF >> $OUTPUT
 <key>
 EOF
 
-cat $CA | while read line; do
+cat $KEY | while read line; do
     echo $line >> $OUTPUT
 done
 
