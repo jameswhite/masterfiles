@@ -47,8 +47,8 @@ body common control
 #                  "cfe_internal/CFE_hub_specific.cf",
 #                  "cfe_internal/CFE_knowledge.cf",
 #
-#                 # Control body for all CFEngine robot agents
-#                  @(cfengine_controls.inputs),
+                 # Control body for all CFEngine robot agents
+                  @(cfengine_controls.inputs),
 #
 #                 # COPBL/Custom libraries.  Eventually this should use wildcards.
 #                  @(cfengine_stdlib.inputs),
@@ -168,38 +168,38 @@ body common control
 # 
 #       #
 # 
-# bundle common cfengine_controls
-# {
-#   vars:
-#     cfengine_3_4::
-#       # This is control body for CFEngine 3.4 and earlier
-#       # server control seems to be a bit problem here
-#       # (only 3.4 is explicitly supported)
-#       "inputs" slist => {
-#                           "controls/cf_agent.cf",
-#                           "controls/cf_execd.cf",
-#                           "controls/cf_hub.cf",
-#                           "controls/cf_monitord.cf",
-#                           "controls/cf_runagent.cf",
-#                           "controls/3.4/cf_serverd.cf",
-#       };
-# 
-#     !cfengine_3_4::
-#       # 3.5 and higher are fine with a standard version
-#       "inputs" slist => {
-#                           "controls/cf_agent.cf",
-#                           "controls/cf_execd.cf",
-#                           "controls/cf_hub.cf",
-#                           "controls/cf_monitord.cf",
-#                           "controls/cf_runagent.cf",
-#                           "controls/cf_serverd.cf",
-#       };
-# 
-#   reports:
-#     verbose_mode::
-#       "$(this.bundle): defining inputs='$(inputs)'";
-# }
-# 
+bundle common cfengine_controls
+{
+  vars:
+    cfengine_3_4::
+      # This is control body for CFEngine 3.4 and earlier
+      # server control seems to be a bit problem here
+      # (only 3.4 is explicitly supported)
+      "inputs" slist => {
+                          "controls/cf_agent.cf",
+                          "controls/cf_execd.cf",
+                          "controls/cf_hub.cf",
+                          "controls/cf_monitord.cf",
+                          "controls/cf_runagent.cf",
+                          "controls/3.4/cf_serverd.cf",
+      };
+
+    !cfengine_3_4::
+      # 3.5 and higher are fine with a standard version
+      "inputs" slist => {
+                          "controls/cf_agent.cf",
+                          "controls/cf_execd.cf",
+                          "controls/cf_hub.cf",
+                          "controls/cf_monitord.cf",
+                          "controls/cf_runagent.cf",
+                          "controls/cf_serverd.cf",
+      };
+
+  reports:
+    verbose_mode::
+      "$(this.bundle): defining inputs='$(inputs)'";
+}
+
 # bundle common cfengine_reports
 # {
 #   vars:
