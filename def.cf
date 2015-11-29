@@ -31,9 +31,10 @@ bundle common def
         comment => "Define an acl for the machines to be granted accesses",
         handle => "common_def_vars_acl";
 
-     "trustkeysfrom" slist => { "127.0.0.1/32" }, comment => "Define from which machines keys can be trusted";
-     "cf3root"         string => "$(sys.workdir)";
-     "dir_masterfiles" string => translatepath("$(cf3root)/masterfiles/$(current_branch)"),
+     "trustkeysfrom"        slist => { "127.0.0.1/32" }, comment => "Define from which machines keys can be trusted";
+     "cf3root"              string => "$(sys.workdir)";
+     "dir_masterfiles_root" string => translatepath("$(cf3root)/masterfiles"),
+     "dir_masterfiles"      string => translatepath("$(dir_masterfiles_root)/$(current_branch)"),
         comment => "Define masterfiles path",
         handle => "common_def_vars_dir_masterfiles";
      "dir_inputs"      string => translatepath("$(sys.workdir)/inputs");
