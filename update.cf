@@ -46,7 +46,7 @@ bundle agent update_inputs
       "$(def.dir_inputs)"
       comment => "Copy the files from our deployed branch",
       handle => "cfe_internal_update_policy_check_valid_update",
-      copy_from => u_rcp("$(def.dir_masterfiles)/cf_promises_validated", @(def.policy_servers)),
+      copy_from => u_rcp("$(def.dir_masterfiles)", @(def.policy_servers)),
       action => u_immediate,
       classes => u_if_repaired("validated_updates_ready");
 }
