@@ -1,5 +1,5 @@
 ### WTF is this shit?
-Stuff with an asterisk we care about, just avoid the rest unless there's a compelling reason to pull it in.
+Stuff with an asterisk we care about, just avoid the rest unless there's a compelling reason to pull it in. I'm working to excise it.
 ```
 README.md* ..... You're reading it.
 cfe_internal ... Some superfluous ha/hub specific things that cfengine ships.
