@@ -39,7 +39,8 @@ rm -fr /var/lib/cfengine3/{masterfiles,inputs}
 ```
 ( cd /var/lib/cfengine3/ppkeys; scp localhost.pub root@odin.websages.com:/var/lib/cfengine3/ppkeys/root-$(cf-key -p localhost.pub).pub )
 ```
-#### Add your egress IP to the [$(def.acl)](https://github.com/websages/masterfiles/blob/master/def.cf#L25-L30)
+
+#### (Only if necessary) Add your egress IP to the [$(def.acl)](https://github.com/websages/masterfiles/blob/master/def.cf#L25-L30)
 ```
       "acl"     slist => {
                            "<YOUR_EGRESS_IP_HERE>/32",
@@ -47,6 +48,11 @@ rm -fr /var/lib/cfengine3/{masterfiles,inputs}
                            "75.146.11.137",
                            ".*$(def.domain)",
                          },
+```
+
+#### (Optionally) Mark your host as being on a non-master branch of masterfiles
+```
+echo "some_feature_branch" > /var/lib/cfengine3/current_branch
 ```
 
 #### Fetch and run the failsafe config
