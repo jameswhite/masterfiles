@@ -68,7 +68,7 @@ bundle server access_rules()
     any::
 
       "$(def.dir_masterfiles_root)"
-      handle => "server_access_grant_access_policy",
+      handle => "server_access_grant_access_policy_root",
       comment => "Grant access to the policy updates",
       admit => { @(def.acl) };
 
