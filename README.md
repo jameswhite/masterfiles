@@ -17,7 +17,7 @@ update ......... Cfengine built-ins for updating using ha and hubs.
 update.cf* ..... The update policy.
 ```
 
-### Bootstrapping a host (gets masterfiles/<branch> deployed to ```$(sys.inputs)```)
+### Bootstrapping a host (gets masterfiles/&lt;branch&gt; deployed to ```$(sys.inputs)```)
 
 #### Install cfengine3
 ```
