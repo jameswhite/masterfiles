@@ -77,8 +77,16 @@ body copy_from u_rcp(from,server)
 
 #########################################################
 
-body copy_from u_cp(from){ source  => "$(from)"; compare => "digest"; }
+body copy_from u_cp(from)
+{
+  source  => "$(from)";
+  compare => "digest";
+}
 
-body classes u_if_repaired(x){ promise_repaired => { "$(x)" }; }
+body classes u_if_repaired(x){
+  promise_repaired => { "$(x)" };
+}
 
-body action u_immediate{ ifelapsed => "0"; }
+body action u_immediate{
+  ifelapsed => "0";
+}
