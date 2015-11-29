@@ -10,107 +10,34 @@ bundle common def
 {
 
   vars:
+     branch_deployed:: 
+       "current_branch"  string => execresult("/bin/cat /var/lib/cfengine3/current_branch", "noshell");
+     !branch_deployed:: 
+       "current_branch"  string => "master";
 
     any::
-
-      # Begin change
-
-      # Your domain name, for use in access control
-
       "domain"  string => "wcyd.org", # this default may be inaccurate!
-      comment => "Define a global domain for all hosts",
-      handle => "common_def_vars_domain";
+        comment => "Define a global domain for all hosts",
+        handle => "common_def_vars_domain";
 
       # List here the IP masks that we grant access to on the server
 
       "acl"     slist => {
-                           # Allow everything in my own domain.
-
-                           # Note that this:
-                           # 1. requires def.domain to be correctly set
-                           # 2. will cause a DNS lookup for every access
+                           "0.0.0.0/0",
+                           "104.237.144.97",
+                           "75.146.11.137",
                            ".*$(def.domain)",
+                         },
+        comment => "Define an acl for the machines to be granted accesses",
+        handle => "common_def_vars_acl";
 
-                           # Assume /16 LAN clients to start with
-                           "$(sys.policy_hub)/16",
-
-                           #  "2001:700:700:3.*",
-                           #  "217.77.34.18",
-                           #  "217.77.34.19",
-      },
-      comment => "Define an acl for the machines to be granted accesses",
-      handle => "common_def_vars_acl";
-
-      # Out of the hosts in allowconnects, trust new keys only from the
-      # following ones.  This is open by default for bootstrapping.
-
-      "trustkeysfrom" slist => {
-                                 # COMMENT THE NEXT LINE OUT AFTER ALL MACHINES HAVE BEEN BOOTSTRAPPED.
-                                 "0.0.0.0/0", # allow any IP
-      },
-      comment => "Define from which machines keys can be trusted";
-
-      # End change #
-
-  cfengine_3_4|cfengine_3_5::
-      "dir_masterfiles" string => translatepath("$(sys.workdir)/masterfiles"),
-      comment => "Define masterfiles path",
-      handle => "common_def_vars_dir_masterfiles_backport";
-
-  !cfengine_3_4.!cfengine_3_5::
-      "dir_masterfiles" string => translatepath("$(sys.masterdir)"),
-      comment => "Define masterfiles path",
-      handle => "common_def_vars_dir_masterfiles";
-
-      "dir_reports"     string => translatepath("$(sys.workdir)/reports"),
-      comment => "Define reports path",
-      handle => "common_def_vars_dir_reports";
-
-      "dir_software"    string => translatepath("$(sys.workdir)/master_software_updates"),
-      comment => "Define software path",
-      handle => "common_def_vars_dir_software";
-
-      "dir_bin"         string => translatepath("$(sys.bindir)"),
-      comment => "Define binary path",
-      handle => "common_def_vars_dir_bin";
-
-      "dir_modules"     string => translatepath("$(sys.workdir)/modules"),
-      comment => "Define modules path",
-      handle => "common_def_vars_dir_modules";
-
-      "dir_plugins"     string => translatepath("$(sys.workdir)/plugins"),
-      comment => "Define plugins path",
-      handle => "common_def_vars_dir_plugins";
-
-    cfengine_3_4|cfengine_3_5::
-      "cf_apache_user" string => "apache",
-      comment => "User that CFEngine Enterprise webserver runs as",
-      handle => "common_def_vars_cf_apache_user";
-
-      "cf_apache_group" string => "apache",
-      comment => "Group that CFEngine Enterprise webserver runs as",
-      handle => "common_def_vars_cf_apache_group";
-
-    !cfengine_3_4.!cfengine_3_5::
-      "cf_apache_user" string => "cfapache",
-      comment => "User that CFEngine Enterprise webserver runs as",
-      handle => "common_def_vars_cf_cfapache_user";
-
-      "cf_apache_group" string => "cfapache",
-      comment => "Group that CFEngine Enterprise webserver runs as",
-      handle => "common_def_vars_cf_cfapache_group";
-
-      solaris::
-      "cf_runagent_shell"
-        string  => "/usr/bin/sh",
-        comment => "Define path to shell used by cf-runagent",
-        handle  => "common_def_vars_solaris_cf_runagent_shell";
-
-      !(windows|solaris)::
-      "cf_runagent_shell"
-        string  => "/bin/sh",
-        comment => "Define path to shell used by cf-runagent",
-        handle  => "common_def_vars_cf_runagent_shell";
+     "trustkeysfrom" slist => { "127.0.0.1/32" }, comment => "Define from which machines keys can be trusted";
+     "cf3root"         string => "$(sys.workdir)";
+     "dir_masterfiles" string => translatepath("$(cf3root)/masterfiles/$(current_branch)"),
+        comment => "Define masterfiles path",
+        handle => "common_def_vars_dir_masterfiles";
+     "dir_inputs"      string => translatepath("$(sys.workdir)/inputs");
+     "policy_servers"  slist  => { "odin.websages.com" };
 
     any::
       "base_log_files" slist =>
@@ -152,16 +79,8 @@ bundle common def
         "$(sys.workdir)/reports",
       };
 
-    # ha_enabled is defined in WORKDIR/cfe_internal/ha/ha_def.cf
-    # Disabled by default
-
-    ha_enabled::
-      "policy_servers" slist => {"$(sys.policy_hub)", @(ha_def.ips)};
-
-    !ha_enabled::
-      "policy_servers" slist => {"$(sys.policy_hub)"};
-
   classes:
+       "branch_deployed" expression => fileexists("$(sys.workdir)/current_branch");
 
       ### Enable special features policies. Set to "any" to enable.
 
