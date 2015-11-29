@@ -23,8 +23,9 @@ bundle common def
       # List here the IP masks that we grant access to on the server
 
       "acl"     slist => {
-                           "104.237.144.97/32",
-                           "75.146.11.137/32",
+                           "0.0.0.0/0",
+                           "104.237.144.97",
+                           "75.146.11.137",
                            ".*$(def.domain)",
                          },
         comment => "Define an acl for the machines to be granted accesses",
