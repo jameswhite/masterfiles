@@ -6,7 +6,7 @@ dpkg -l | grep -q "ii  git" || (apt-get update && apt-get install -y git)
 sed -i -e 's/RUN_CF\(.*\)=0/RUN_CF\1=1/' /etc/default/cfengine3
 rm -fr /var/lib/cfengine3/{masterfiles,inputs}
 ( cd /var/lib/cfengine3/ppkeys; scp localhost.pub root@odin.websages.com:/var/lib/cfengine3/ppkeys/root-$(cf-key -p localhost.pub).pub )
-# write out failsafe.cf
+curl -s https://raw.githubusercontent.com/websages/masterfiles/master/failsafe.cf > /var/lib/cfengine3/inputs/failsafe.cf
 cf-agent -Kvf /var/lib/cfengine3/inputs/failsafe.cf
 cf-agent -Kv
 ```
