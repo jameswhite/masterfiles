@@ -1,3 +1,8 @@
+// Referenced via HTTP as such:
+//
+// http://10.255.0.217:9090/CMD?HarmonyHubWatchTV=ON
+// http://10.255.0.217:9090/CMD?HarmonyHubPowerOff=OFF
+
 // Logitech Harmony Hub
 String HarmonyHubActivity          "activity [%s]"    { harmonyhub="*[currentActivity]" }
 String HarmonyHubPowerOff          "powerOff"         { harmonyhub=">[start:PowerOff]" }
