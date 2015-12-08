@@ -22,7 +22,9 @@ update.cf* ..... The update policy.
 #### Install cfengine3
 ```
 dpkg -l | grep -q "ii  cfengine3" || (apt-get update && apt-get install -y cfengine3)
+dpkg -l | grep -q "ii  dpkg" || (apt-get update && apt-get install -y dpkg)
 ```
+
 
 #### Enable the Services
 ```
@@ -37,7 +39,14 @@ rm -fr /var/lib/cfengine3/{masterfiles,inputs}
 
 #### scp your ppkey to the policy host
 ```
-( cd /var/lib/cfengine3/ppkeys; scp localhost.pub root@odin.websages.com:/var/lib/cfengine3/ppkeys/root-$(cf-key -p localhost.pub).pub )
+
+dpkg --compare-versions $(/usr/bin/dpkg-query -W -f='${Version}' cfengine3) lt 3.6
+if [ $? ]; then
+  ( cd /var/lib/cfengine3/ppkeys; scp localhost.pub root@odin.websages.com:/var/lib/cfengine3/ppkeys/root-$(hostname -f).pub )
+  ssh root@odin.websages.com "mv /var/lib/cfengine3/ppkeys/root-$(hostname -f).pub /var/lib/cfengine3/ppkeys/root-\$(/usr/local/sbin/cf-key -p /var/lib/cfengine3/ppkeys/root-$(hostname -f).pub).pub"
+else
+  ( cd /var/lib/cfengine3/ppkeys; scp localhost.pub root@odin.websages.com:/var/lib/cfengine3/ppkeys/root-$(cf-key -p localhost.pub).pub )
+fi
 ```
 
 #### (Only if necessary) Add your egress IP to the [$(def.acl)](https://github.com/websages/masterfiles/blob/master/def.cf#L25-L30)
