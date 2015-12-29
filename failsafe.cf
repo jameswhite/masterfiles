@@ -2,8 +2,8 @@
 
 body common control
 {
-      bundlesequence => { 
-                          "update", 
+      bundlesequence => {
+                          "update",
                           "call_update"
                         };
 }
@@ -34,11 +34,11 @@ bundle agent update
 
     any::
 
-      "have_ppkeys"      
+      "have_ppkeys"
         expression => fileexists("$(sys.workdir)/ppkeys/localhost.pub"),
          handle => "bootstrap_update_classes_have_ppkeys";
 
-      "have_promises_cf" 
+      "have_promises_cf"
         expression => fileexists("$(sys.inputdir)/promises.cf"),
         handle => "bootstrap_update_classes_have_promises_cf";
 
@@ -49,11 +49,10 @@ bundle agent update
   files:
 
     have_ppkeys::
-      "$(sys.inputdir)" 
+      "$(sys.inputdir)/update.cf"
         handle => "bootstrap_update_files_sys_workdir_inputs_not_windows",
-        copy_from => u_scp("$(dir_masterfiles)"),
-        depth_search => u_recurse("inf"),
-        classes => repaired("got_policy");
+        copy_from => u_scp("$(dir_masterfiles)/update.cf"),
+        classes => repaired("got_update");
 
   reports:
 
@@ -73,7 +72,6 @@ bundle agent update
 
     !executor_started.have_promises_cf::
       "You are running a hard-coded failsafe. Please use the following command instead.  $(sys.cf_agent) -f $(sys.inputdir)/update.cf" handle => "bootstrap_update_reports_run_another_failsafe_instead";
-      
 }
 
 bundle agent call_update
@@ -82,31 +80,31 @@ bundle agent call_update
  "$(sys.cf_agent) -f update.cf" handle => "call_update_commands_call_update_cf";
 }
 
-body classes repaired(x)       { 
-                                 promise_repaired => {"$(x)"}; 
+body classes repaired(x)       {
+                                 promise_repaired => {"$(x)"};
                                }
-body perms u_p(p)              { 
-                                 mode  => "$(p)"; 
+body perms u_p(p)              {
+                                 mode  => "$(p)";
                                }
-body copy_from u_scp(from)     { 
-                                 source => "$(from)"; 
-                                 compare     => "digest"; 
-                                 trustkey    => "true"; 
-                                 !am_policy_hub:: 
+body copy_from u_scp(from)     {
+                                 source => "$(from)";
+                                 compare     => "digest";
+                                 trustkey    => "true";
+                                 !am_policy_hub::
                                    servers => { "$(policy_servers)" };
                                }
-body action u_background       { 
-                                 background => "true"; 
+body action u_background       {
+                                 background => "true";
                                }
-body depth_search u_recurse(d) { 
-                                 depth => "$(d)"; 
+body depth_search u_recurse(d) {
+                                 depth => "$(d)";
                                  exclude_dirs => { "\.svn", "\.git" };
                                }
-body service_method bootstart  { 
-                                 service_autostart_policy => "boot_time"; 
+body service_method bootstart  {
+                                 service_autostart_policy => "boot_time";
                                }
-body copy_from u_cp(from)      { 
-                                 source      => "$(from)"; 
-                                 compare     => "digest"; 
+body copy_from u_cp(from)      {
+                                 source      => "$(from)";
+                                 compare     => "digest";
                                  copy_backup => "false";
                                }
