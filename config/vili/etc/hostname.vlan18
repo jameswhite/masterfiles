@@ -1,0 +1,1 @@
+inet 10.255.18.1 255.255.255.0 NONE vlan 18 vlandev em7
