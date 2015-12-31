@@ -53,8 +53,13 @@ esx01        IN A 10.255.2.198
 esx02        IN A 10.255.2.199
 sol          IN A 10.255.2.200
 feynman      IN A 10.255.2.241
-saturn       IN A 10.255.2.242
 planck       IN A 10.255.2.244
 newton       IN A 10.255.2.251
 
+einstein     IN A 10.255.12.51
+pascal       IN A 10.255.12.52
 vonnegut     IN A 10.255.12.53
+saturn       IN A 10.255.12.54
+sol          IN A 10.255.12.200
+esx01        IN A 10.255.12.201
+esx02        IN A 10.255.12.202
