@@ -3,6 +3,6 @@ BIN_DIR=$(cd $(dirname $0); pwd)
 CONF_DIR=$(cd ${BIN_DIR}/../config;pwd)
 for node in $(ls ${CONF_DIR}/nodes); do
   for file in $(cd ${CONF_DIR}/nodes/${node}; find * -type f); do
-    scp root@$node:/${file} ${file}
+    echo "scp root@$node:/${file} ${file}"
   done
 done
