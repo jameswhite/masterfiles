@@ -38,7 +38,7 @@ moe             IN A 10.255.0.228
 vera-lite       IN A 10.255.0.230
 hulk            IN A 10.255.0.231
 sobol           IN A 10.255.0.232
-vili            IN A 10.255.0.233
+vili            IN A 10.255.0.1
 
 moe          IN A 10.255.2.51
 larry        IN A 10.255.2.52
