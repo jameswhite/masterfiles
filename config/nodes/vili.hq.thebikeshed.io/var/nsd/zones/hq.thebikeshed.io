@@ -1,15 +1,17 @@
+
 $TTL 86400
 
 hq.thebikeshed.io. 3600 SOA ns1.hq.thebikeshed.io. admin.hq.thebikeshed.io. (
-    0001        ; serial
-    1800        ; refresh
-    7200        ; retry
-    1209600     ; expire
-    3600 )      ; negative
+    0002	; serial
+    1800	; refresh
+    7200	; retry
+    1209600	; expire
+    3600 )	; negative
 
     IN NS ns1.hq.thebikeshed.io.
 
 ns1             IN A 10.255.0.1
+vili            IN A 10.255.0.1
 frybook         IN A 10.255.0.2
 frybookair      IN A 10.255.0.3
 pink            IN A 10.255.0.200
@@ -38,7 +40,6 @@ moe             IN A 10.255.0.228
 vera-lite       IN A 10.255.0.230
 hulk            IN A 10.255.0.231
 sobol           IN A 10.255.0.232
-vili            IN A 10.255.0.1
 
 moe          IN A 10.255.2.51
 larry        IN A 10.255.2.52
@@ -51,7 +52,6 @@ tolstoy      IN A 10.255.2.58
 esx03        IN A 10.255.2.197
 esx01        IN A 10.255.2.198
 esx02        IN A 10.255.2.199
-sol          IN A 10.255.2.200
 feynman      IN A 10.255.2.241
 planck       IN A 10.255.2.244
 newton       IN A 10.255.2.251

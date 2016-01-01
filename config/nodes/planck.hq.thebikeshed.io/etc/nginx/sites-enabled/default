@@ -1,0 +1,57 @@
+upstream rpi-office-01   { server 10.255.0.212:8081; }
+upstream rpi-office-02   { server 10.255.0.213:8081; }
+upstream digdug          { server 10.255.0.214:8081; }
+upstream keg-left        { server 10.255.0.215:8081; }
+upstream keg-right       { server 10.255.0.216:8081; }
+upstream bigscreen       { server 10.255.0.217:8081; }
+upstream door            { server 10.255.0.218:8081; }
+
+upstream hecuba-orbit    { server 10.255.3.129:8081; }
+upstream hecuba-door     { server 10.255.3.70:8081; }
+upstream hecuba-recliner { server 10.255.3.70:8080; }
+upstream hecuba-laundry  { server 10.255.3.101:8081; }
+upstream hecuba-closet   { server 10.255.3.102:8081; }
+upstream hecuba-bedroom  { server 10.255.3.103:8081; }
+
+upstream hecuba-wide0    { server 10.255.3.72:8080; }
+upstream hecuba-wide1    { server 10.255.3.72:8081; }
+upstream hecuba-wide2    { server 10.255.3.72:8082; }
+
+server {
+	listen 8080 default_server;
+	listen [::]:8080 default_server;
+
+	# listen 443 ssl default_server;
+	# listen [::]:443 ssl default_server;
+	# include snippets/snakeoil.conf;
+
+	root /var/www/html;
+	index index.html index.htm index.nginx-debian.html;
+	server_name _;
+	location / {
+		try_files $uri $uri/ =404;
+	}
+        
+        location /openbsd {
+                autoindex on;
+        }
+
+        location /rpi-office-01/   { proxy_pass http://rpi-office-01/; }
+        location /rpi-office-02/   { proxy_pass http://rpi-office-02/; }
+        location /digdug/          { proxy_pass http://digdug/;        }
+        location /keg-left/        { proxy_pass http://keg-left;       }
+        location /keg-right/       { proxy_pass http://keg-right/;     }
+        location /bigscreen/       { proxy_pass http://bigscreen/;     }
+        location /door/            { proxy_pass http://door/;          }
+
+        location /hecuba-orbit     { proxy_pass http://hecuba-orbit;   }
+        location /hecuba-door/     { proxy_pass http://hecuba-door;    }
+        location /hecuba-recliner/ { proxy_pass http://hecuba-recliner;}
+        location /hecuba-laundry   { proxy_pass http://hecuba-laundry; }
+        location /hecuba-closet    { proxy_pass http://hecuba-closet;  }
+        location /hecuba-bedroom   { proxy_pass http://hecuba-bedroom; }
+
+        location /hecuba-wide0     { proxy_pass http://hecuba-wide0; }
+        location /hecuba-wide1     { proxy_pass http://hecuba-wide1; }
+        location /hecuba-wide2     { proxy_pass http://hecuba-wide2; }
+}
