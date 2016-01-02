@@ -54,6 +54,10 @@ bundle agent update
         copy_from => u_scp("$(dir_masterfiles)/update.cf"),
         classes => repaired("got_update");
 
+      "$(sys.inputdir)/def.cf"
+        handle => "bootstrap_update_files_sys_workdir_inputs_not_windows",
+        copy_from => u_scp("$(dir_masterfiles)/def.cf");
+
   reports:
 
     got_policy::
