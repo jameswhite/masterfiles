@@ -74,7 +74,7 @@ bundle agent update
 
     what_the_actual_fuck::
       "Failed to copy update.cf or def.cf from $(policy_servers):$(dir_masterfiles)
-       Please check
+       Please check (what the actual fuck?)
        * cf-serverd is running on $(policy_servers)
        * network connectivity to $(policy_servers) on port 5308
        * masterfiles 'body server control' - in particular allowconnects, trustkeysfrom and skipverify
