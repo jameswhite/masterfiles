@@ -72,7 +72,7 @@ bundle agent update
     got_def_cf::
       "Updated def.cf from policy server" handle => "bootstrap_update_reports_got_def_cf";
 
-    !(have_update_cf|got_update_cf)|!(have_def_cf|got_def_cf).have_ppkeys::
+    ((!have_update_cf.!got_update_cf)|(!have_def_cf|!got_def_cf)).have_ppkeys::
       "Failed to copy update.cf and def.cf from $(policy_servers):$(dir_masterfiles)
        Please check
        * cf-serverd is running on $(policy_servers)
@@ -91,24 +91,24 @@ bundle agent call_update
  "$(sys.cf_agent) -f update.cf" handle => "call_update_commands_call_update_cf";
 }
 
-body classes repaired(x)       { promise_repaired => {"$(x)"}; }
+body classes repaired(x)         { promise_repaired => {"$(x)"}; }
 body classes kept_or_repaired(x) {
                                    promise_repaired => {"$(x)"};
                                    promise_kept     => {"$(x)"};
                                  }
-body perms u_p(p)              { mode  => "$(p)"; }
-body copy_from u_scp(from)     {
-                                 source => "$(from)";
-                                 compare     => "digest";
-                                 trustkey    => "true";
-                                 !am_policy_hub::
-                                   servers => { "$(policy_servers)" };
-                               }
-body action u_background       { background => "true"; }
-body depth_search u_recurse(d) { depth => "$(d)"; exclude_dirs => { "\.svn", "\.git" }; }
-body service_method bootstart  { service_autostart_policy => "boot_time"; }
-body copy_from u_cp(from)      {
-                                 source      => "$(from)";
-                                 compare     => "digest";
-                                 copy_backup => "false";
-                               }
+body perms u_p(p)                { mode  => "$(p)"; }
+body copy_from u_scp(from)       {
+                                   source => "$(from)";
+                                   compare     => "digest";
+                                   trustkey    => "true";
+                                   !am_policy_hub::
+                                     servers => { "$(policy_servers)" };
+                                 }
+body action u_background         { background => "true"; }
+body depth_search u_recurse(d)   { depth => "$(d)"; exclude_dirs => { "\.svn", "\.git" }; }
+body service_method bootstart    { service_autostart_policy => "boot_time"; }
+body copy_from u_cp(from)        {
+                                   source      => "$(from)";
+                                   compare     => "digest";
+                                   copy_backup => "false";
+                                 }
