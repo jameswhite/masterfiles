@@ -52,13 +52,13 @@ bundle agent update
 
   files:
 
-    have_ppkeys.!have_update.cf::
+    have_ppkeys.!have_update_cf::
       "$(sys.inputdir)/update.cf"
         handle => "bootstrap_update_file_update_cf",
         copy_from => u_scp("$(dir_masterfiles)/update.cf"),
         classes => repaired("got_update_cf");
 
-    have_ppkeys.!have_def.cf::
+    have_ppkeys.!have_def_cf::
       "$(sys.inputdir)/def.cf"
         handle => "bootstrap_update_file_def_cf",
         copy_from => u_scp("$(dir_masterfiles)/def.cf"),
