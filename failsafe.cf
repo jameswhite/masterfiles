@@ -41,12 +41,12 @@ bundle agent update
       "have_update_cf"
         expression => fileexists("$(sys.inputdir)/update.cf"),
         handle => "bootstrap_update_classes_have_update_cf",
-        classes => repaired("got_update_cf");
+        classes => "got_update_cf";
 
       "have_def_cf"
         expression => fileexists("$(sys.inputdir)/def.cf"),
         handle => "bootstrap_update_classes_have_def_cf",
-        classes => repaired("got_def_cf");
+        classes => "got_def_cf";
 
   commands:
     !have_ppkeys::
@@ -68,10 +68,10 @@ bundle agent update
 
   reports:
 
-    got_update_cf::
+    !got_update_cf::
       "Updated update.cf from policy server" handle => "bootstrap_update_reports_got_update_cf";
 
-    got_def_cf::
+    !got_def_cf::
       "Updated def.cf from policy server" handle => "bootstrap_update_reports_got_def_cf";
 
     !got_update_cf.!got_def_cf.have_ppkeys::
