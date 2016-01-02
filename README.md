@@ -66,7 +66,8 @@ echo "some_feature_branch" > /var/lib/cfengine3/current_branch
 
 #### Fetch and run the failsafe config
 ```
-curl -s https://raw.githubusercontent.com/websages/masterfiles/master/failsafe.cf > /var/lib/cfengine3/inputs/failsafe.cf
+[ ! -d /var/lib/cfengine3/inputs ] && mkdir -p /var/lib/cfengine3/inputs
+curl -ks https://raw.githubusercontent.com/websages/masterfiles/master/failsafe.cf > /var/lib/cfengine3/inputs/failsafe.cf
 cf-agent -Kvf /var/lib/cfengine3/inputs/failsafe.cf
 ```
 
