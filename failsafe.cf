@@ -62,7 +62,7 @@ bundle agent update
       "$(sys.inputdir)/def.cf"
         handle => "bootstrap_update_file_def_cf",
         copy_from => u_scp("$(dir_masterfiles)/def.cf"),
-        classes => repaired_not_repaired("got_def_cf","failed_def_cf_get");
+        classes => repaired_or_not("got_def_cf","failed_def_cf_get");
 
   reports:
 
