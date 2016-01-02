@@ -1,0 +1,89 @@
+#!/bin/bash
+export PATH="/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/var/cfengine/bin"
+
+# Our Authoritative source is github You'll need a deploy key on policyhosts.
+export GIT_SOURCE="git@github.com:websages/masterfiles.git"
+
+# Where we stage git GitHub -> /var/cache/git
+export MASTERFILES_REPO="masterfiles"
+export GIT_CACHE="/var/cache/git"
+if [ ! -d ${GIT_CACHE} ]; then mkdir -p ${GIT_CACHE};fi
+
+# where we copy git branches masterfiles/{master,lab,stage,feature-branch,etc}
+export MASTERFILES="/var/lib/cfengine3/masterfiles"
+if [ ! -d ${MASTERFILES} ]; then mkdir -p ${MASTERFILES}; fi
+
+# where the active policies live
+export INPUTS="/var/lib/cfengine3/inputs"
+
+# where git2masterfiles is in repo (temp hack)
+export RELATIVE_GIT2MASTERFILES="/config/class/policyhost/usr/local/sbin/git2masterfiles"
+
+umask 0022
+
+# where we ran this script from
+export SELF="$(basename $0)"; DIR="$(dirname $0)"; FQDIR="$(cd ${DIR}; pwd)"; FQPATH="${FQDIR}/${SELF}"
+
+# the md5 of the script we initially ran
+export OLD_MD5="$(md5sum ${FQPATH} | awk '{print $1}')"
+
+cd ${GIT_CACHE};
+# git clone || git update the repository (strip off the .git if present)
+repo_dir=$(basename  ${MASTERFILES_REPO}|sed -e 's/\.git$//g')
+if [ ! -d ${GIT_CACHE}/${repo_dir}/.git ]; then
+  if [ -d ${GIT_CACHE}/${repo_dir} ]; then rm -fr ${GIT_CACHE}/${repo_dir}; fi
+    git clone ${GIT_SOURCE} ${MASTERFILES_REPO} > /dev/null 2>&1
+    [ -d ${GIT_CACHE}/${repo_dir} ] && exit 1
+else
+  ( cd ${GIT_CACHE}/${repo_dir}; git pull > /dev/null 2>&1 )
+fi
+
+# make sure we have the correct copy of this script
+NEW_MD5=$(md5sum ${GIT_CACHE}/${repo_dir}/${RELATIVE_GIT2MASTERFILES}| awk '{print $1}')
+if [ "${OLD_MD5}" != "${NEW_MD5}" ]; then
+  install -m 0744 ${GIT_CACHE}/${repo_dir}/${RELATIVE_GIT2MASTERFILES} ${FQPATH}
+  exec ${FQPATH}
+fi
+
+# checkout all the remote branches locally, rsync them to masterfiles/<branch_name>
+if [ -d ${GIT_CACHE}/${repo_dir}/ ];then
+  (cd ${GIT_CACHE}/${repo_dir}; git fetch > /dev/null 2>&1)
+  (
+    cd ${GIT_CACHE}/${repo_dir}
+    for rbranch in $(git branch -r | grep -v -- '->' | awk -F'/' '{print $NF}'); do
+      if [ -z "$(git branch| grep ${rbranch})" ]; then
+        git checkout -b ${rbranch} origin/${rbranch} > /dev/null 2>&1
+        git pull origin ${rbranch} > /dev/null 2>&1
+      else
+        git checkout ${rbranch} > /dev/null 2>&1
+        git pull origin ${rbranch} > /dev/null 2>&1
+      fi
+      [ ! -d "${MASTERFILES}/${rbranch}" ] && mkdir -p "${MASTERFILES}/${rbranch}/"
+      rsync -aqzPC --exclude ".git" --exclude "cf_promises_validated" --delete ${GIT_CACHE}/${repo_dir}/ ${MASTERFILES}/${rbranch}/
+      (cd ${GIT_CACHE}/${repo_dir}; git log| head -1| awk '{print $NF}') > ${MASTERFILES}/${rbranch}/.git_commit_hash
+    done
+    [ "$(cd ${GIT_CACHE}/${repo_dir}; git branch | grep '*' | awk '{print $NF}')" != "master" ] && git checkout master >/dev/null 2>&1
+  )
+
+# delete all local branches and masterfile directories that are no longer in the remote repository
+  (
+    cd ${GIT_CACHE}/${repo_dir}
+    git remote prune origin
+    for ldir in $(ls ${MASTERFILES}); do
+      if [ -z "$(git branch -r | grep -v -- '->' | awk -F'/' '{print $NF}'|grep ${ldir})" ]; then
+        rm -fr ${MASTERFILES}/${ldir}
+      fi
+    done
+   
+   # Clean up the local branches
+   for lbranch in $(git branch | awk '{print $NF}'); do
+     if [ -z "$(git branch -r | grep -v -- '->' | awk -F'/' '{print $NF}'|grep ${lbranch})" ]; then
+       git branch -D ${lbranch}
+     fi
+   done
+  )
+fi
+# 
+current_branch=$(cat /var/lib/cfengine3/current_branch 2>/dev/null)
+[ -z "${current_branch}" ] && current_branch="master"
+rsync -aqzPC --exclude ".git" --exclude "cf_promises_validated" --delete ${MASTERFILES}/${current_branch}/ ${INPUTS}/
