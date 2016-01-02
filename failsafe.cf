@@ -50,12 +50,12 @@ bundle agent update
 
     have_ppkeys::
       "$(sys.inputdir)/update.cf"
-        handle => "bootstrap_update_files_sys_workdir_inputs_not_windows",
+        handle => "bootstrap_update_file_update_cf",
         copy_from => u_scp("$(dir_masterfiles)/update.cf"),
         classes => repaired("got_update");
 
       "$(sys.inputdir)/def.cf"
-        handle => "bootstrap_update_files_sys_workdir_inputs_not_windows",
+        handle => "bootstrap_update_file_def_cf",
         copy_from => u_scp("$(dir_masterfiles)/def.cf");
 
   reports:
