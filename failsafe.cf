@@ -72,7 +72,7 @@ bundle agent update
     got_def_cf::
       "Updated def.cf from policy server" handle => "bootstrap_update_reports_got_def_cf";
 
-    failed_file_get::
+    what_the_actual_fuck::
       "Failed to copy update.cf or def.cf from $(policy_servers):$(dir_masterfiles)
        Please check
        * cf-serverd is running on $(policy_servers)
