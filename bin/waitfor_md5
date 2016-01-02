@@ -1,0 +1,8 @@
+#!/bin/bash
+local_md5=$(md5 failsafe.cf|awk '{print $NF}');
+remote_md5=$(curl -ks https://raw.githubusercontent.com/websages/masterfiles/bootstrapping_pascal/failsafe.cf| md5|awk '{print $NF}');
+while [ "${local_md5}" != "${remote_md5}" ]; do
+  echo "$local_md5 $remote_md5";
+  remote_md5=$(curl -ks https://raw.githubusercontent.com/websages/masterfiles/bootstrapping_pascal/failsafe.cf| md5|awk '{print $NF}');
+  sleep 3;
+done
