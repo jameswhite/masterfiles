@@ -93,8 +93,9 @@ bundle agent call_update
 
 body classes repaired(x)         { promise_repaired => {"$(x)"}; }
 body classes repaired_or_not(x,y){
-                                   promise_repaired     => {"$(x)"};
-                                   promise_not_repaired => {"$(y)"};
+                                   promise_kept      => {"$(x)"};
+                                   promise_repaired  => {"$(x)"};
+                                   repair_failed     => {"$(y)"};
                                  }
 body perms u_p(p)                { mode  => "$(p)"; }
 body copy_from u_scp(from)       {
