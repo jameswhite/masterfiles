@@ -40,13 +40,11 @@ bundle agent update
 
       "have_update_cf"
         expression => fileexists("$(sys.inputdir)/update.cf"),
-        handle => "bootstrap_update_classes_have_update_cf",
-        classes => kept("got_update_cf");
+        handle => "bootstrap_update_classes_have_update_cf";
 
       "have_def_cf"
         expression => fileexists("$(sys.inputdir)/def.cf"),
-        handle => "bootstrap_update_classes_have_def_cf",
-        classes => kept("got_def_cf");
+        handle => "bootstrap_update_classes_have_def_cf";
 
   commands:
     !have_ppkeys::
@@ -58,13 +56,13 @@ bundle agent update
       "$(sys.inputdir)/update.cf"
         handle => "bootstrap_update_file_update_cf",
         copy_from => u_scp("$(dir_masterfiles)/update.cf"),
-        classes => repaired("got_update_cf");
+        classes => repaired("got_update_cf"), kept("got_update_cf");
 
     have_ppkeys.!have_def_cf::
       "$(sys.inputdir)/def.cf"
         handle => "bootstrap_update_file_def_cf",
         copy_from => u_scp("$(dir_masterfiles)/def.cf"),
-        classes => repaired("got_def_cf");
+        classes => repaired("got_def_cf"), kept("got_def_cf");
 
   reports:
 
