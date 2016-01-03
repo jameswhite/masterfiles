@@ -65,23 +65,11 @@ bundle agent update
         classes => repaired_or_not("got_def_cf","failed_def_cf_get");
 
   reports:
-
     got_update_cf::
       "Updated update.cf from policy server" handle => "bootstrap_update_reports_got_update_cf";
 
     got_def_cf::
       "Updated def.cf from policy server" handle => "bootstrap_update_reports_got_def_cf";
-
-    what_the_actual_fuck::
-      "Failed to copy update.cf or def.cf from $(policy_servers):$(dir_masterfiles)
-       Please check (what the actual fuck?)
-       * cf-serverd is running on $(policy_servers)
-       * network connectivity to $(policy_servers) on port 5308
-       * masterfiles 'body server control' - in particular allowconnects, trustkeysfrom and skipverify
-       * masterfiles 'bundle server' -> access: -> masterfiles -> admit/deny
-       It is often useful to restart cf-serverd in verbose mode (cf-serverd -vvF) on $(policy_servers) to diagnose connection issues.
-       When updating masterfiles, wait (usually 5 minutes) for files to propagate to inputs on $(policy_servers) before retrying."
-      handle => "bootstrap_update_reports_did_not_get_update_def";
 
 }
 
