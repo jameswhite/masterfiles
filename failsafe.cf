@@ -3,6 +3,7 @@
 body common control
 {
       bundlesequence => {
+                          "branch_deployed",
                           "update",
                           "call_update"
                         };
@@ -11,6 +12,12 @@ body common control
 body agent control
 {
       skipidentify => "true";
+}
+
+bundle agent branch_deployed
+{
+  classes:
+      "branch_deployed" expression => fileexists("$(sys.workdir)/current_branch");
 }
 
 bundle agent update
@@ -30,25 +37,11 @@ bundle agent update
          "current_branch"  string => "master";
 
   classes:
-      "branch_deployed" expression => fileexists("$(sys.workdir)/current_branch");
-
     any::
 
       "have_ppkeys"
         expression => fileexists("$(sys.workdir)/ppkeys/localhost.pub"),
          handle => "bootstrap_update_classes_have_ppkeys";
-
-      "have_update_cf"
-        expression => fileexists("$(sys.inputdir)/update.cf"),
-        handle => "bootstrap_update_classes_have_update_cf";
-
-      "have_def_cf"
-        expression => fileexists("$(sys.inputdir)/def.cf"),
-        handle => "bootstrap_update_classes_have_def_cf";
-
-      "have_promises_cf"
-        expression => fileexists("$(sys.inputdir)/promises.cf"),
-        handle => "bootstrap_update_classes_have_promises_cf";
 
   commands:
     !have_ppkeys::
@@ -56,30 +49,16 @@ bundle agent update
 
   files:
 
-    have_ppkeys.!have_update_cf::
-      "$(sys.inputdir)/update.cf"
-        handle => "bootstrap_update_file_update_cf",
-        copy_from => u_scp("$(dir_masterfiles)/update.cf"),
-        classes => repaired_or_not("got_update_cf","failed_update_cf_get");
-
-    have_ppkeys.!have_def_cf::
-      "$(sys.inputdir)/def.cf"
-        handle => "bootstrap_update_file_def_cf",
-        copy_from => u_scp("$(dir_masterfiles)/def.cf"),
-        classes => repaired_or_not("got_def_cf","failed_def_cf_get");
-
-    have_ppkeys.!have_promises_cf::
-      "$(sys.inputdir)/promises.cf"
-        handle => "bootstrap_update_file_promises_cf",
-        copy_from => u_scp("$(dir_masterfiles)/promises.cf"),
-        classes => repaired_or_not("got_promises_cf","failed_promises_cf_get");
+    have_ppkeys::
+      "$(sys.inputdir)/"
+        handle => "bootstrap_inputs_from_failsafe",
+        copy_from => u_scp("$(dir_masterfiles)/"),
+        depth_search => recurse("inf"),
+        classes => repaired_or_not("get_inputs_success","get_inputs_failed");
 
   reports:
-    got_update_cf::
-      "Updated update.cf from policy server" handle => "bootstrap_update_reports_got_update_cf";
-
-    got_def_cf::
-      "Updated def.cf from policy server" handle => "bootstrap_update_reports_got_def_cf";
+    get_inputs_success::
+      "Updated inputs from policy server" handle => "bootstrap_inputs_from_failsafe";
 
 }
 
@@ -90,12 +69,15 @@ bundle agent call_update
 }
 
 body classes repaired(x)         { promise_repaired => {"$(x)"}; }
+
 body classes repaired_or_not(x,y){
                                    promise_kept      => {"$(x)"};
                                    promise_repaired  => {"$(x)"};
                                    repair_failed     => {"$(y)"};
                                  }
+
 body perms u_p(p)                { mode  => "$(p)"; }
+
 body copy_from u_scp(from)       {
                                    source => "$(from)";
                                    compare     => "digest";
@@ -103,9 +85,13 @@ body copy_from u_scp(from)       {
                                    !am_policy_hub::
                                      servers => { "$(policy_servers)" };
                                  }
+
 body action u_background         { background => "true"; }
+
 body depth_search u_recurse(d)   { depth => "$(d)"; exclude_dirs => { "\.svn", "\.git" }; }
+
 body service_method bootstart    { service_autostart_policy => "boot_time"; }
+
 body copy_from u_cp(from)        {
                                    source      => "$(from)";
                                    compare     => "digest";
