@@ -46,6 +46,10 @@ bundle agent update
         expression => fileexists("$(sys.inputdir)/def.cf"),
         handle => "bootstrap_update_classes_have_def_cf";
 
+      "have_promises_cf"
+        expression => fileexists("$(sys.inputdir)/promises.cf"),
+        handle => "bootstrap_update_classes_have_promises_cf";
+
   commands:
     !have_ppkeys::
       "$(sys.cf_key)" handle => "bootstrap_update_commands_generate_keys";
@@ -63,6 +67,12 @@ bundle agent update
         handle => "bootstrap_update_file_def_cf",
         copy_from => u_scp("$(dir_masterfiles)/def.cf"),
         classes => repaired_or_not("got_def_cf","failed_def_cf_get");
+
+    have_ppkeys.!have_promises_cf::
+      "$(sys.inputdir)/promises.cf"
+        handle => "bootstrap_update_file_promises_cf",
+        copy_from => u_scp("$(dir_masterfiles)/promises.cf"),
+        classes => repaired_or_not("got_promises_cf","failed_promises_cf_get");
 
   reports:
     got_update_cf::
