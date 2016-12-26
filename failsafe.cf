@@ -53,7 +53,7 @@ bundle agent update
       "$(sys.inputdir)/"
         handle => "bootstrap_inputs_from_failsafe",
         copy_from => u_scp("$(dir_masterfiles)/"),
-        depth_search => recurse("inf"),
+        depth_search => u_recurse("inf"),
         classes => repaired_or_not("get_inputs_success","get_inputs_failed");
 
   reports:
