@@ -1,0 +1,99 @@
+# failsafe.cf
+
+body common control
+{
+      bundlesequence => {
+                          "branch_deployed",
+                          "update",
+                          "call_update"
+                        };
+}
+
+body agent control
+{
+      skipidentify => "true";
+}
+
+bundle agent branch_deployed
+{
+  classes:
+      "branch_deployed" expression => fileexists("$(sys.workdir)/current_branch");
+}
+
+bundle agent update
+{
+
+  vars:
+
+      "cf3root"         string => "$(sys.workdir)";
+      "dir_masterfiles" string => translatepath("$(cf3root)/masterfiles/$(current_branch)"), comment => "Define masterfiles path", handle => "common_def_vars_dir_masterfiles";
+      "dir_inputs"      string => translatepath("$(sys.workdir)/inputs");
+      "policy_servers"  slist  => { "odin.websages.com" };
+
+    branch_deployed::
+         "current_branch"  string => execresult("/bin/cat /var/lib/cfengine3/current_branch", "noshell");
+
+    !branch_deployed::
+         "current_branch"  string => "master";
+
+  classes:
+    any::
+
+      "have_ppkeys"
+        expression => fileexists("$(sys.workdir)/ppkeys/localhost.pub"),
+         handle => "bootstrap_update_classes_have_ppkeys";
+
+  commands:
+    !have_ppkeys::
+      "$(sys.cf_key)" handle => "bootstrap_update_commands_generate_keys";
+
+  files:
+
+    have_ppkeys::
+      "$(sys.inputdir)/"
+        handle => "bootstrap_inputs_from_failsafe",
+        copy_from => u_scp("$(dir_masterfiles)/"),
+        depth_search => u_recurse("inf"),
+        classes => repaired_or_not("get_inputs_success","get_inputs_failed");
+
+  reports:
+    get_inputs_success::
+      "Updated inputs from policy server" handle => "bootstrap_inputs_from_failsafe";
+
+}
+
+bundle agent call_update
+{
+  commands:
+ "$(sys.cf_agent) -f update.cf" handle => "call_update_commands_call_update_cf";
+}
+
+body classes repaired(x)         { promise_repaired => {"$(x)"}; }
+
+body classes repaired_or_not(x,y){
+                                   promise_kept      => {"$(x)"};
+                                   promise_repaired  => {"$(x)"};
+                                   repair_failed     => {"$(y)"};
+                                 }
+
+body perms u_p(p)                { mode  => "$(p)"; }
+
+body copy_from u_scp(from)       {
+                                   source => "$(from)";
+                                   compare     => "digest";
+                                   trustkey    => "true";
+                                   !am_policy_hub::
+                                     servers => { "$(policy_servers)" };
+                                 }
+
+body action u_background         { background => "true"; }
+
+body depth_search u_recurse(d)   { depth => "$(d)"; exclude_dirs => { "\.svn", "\.git" }; }
+
+body service_method bootstart    { service_autostart_policy => "boot_time"; }
+
+body copy_from u_cp(from)        {
+                                   source      => "$(from)";
+                                   compare     => "digest";
+                                   copy_backup => "false";
+                                 }
